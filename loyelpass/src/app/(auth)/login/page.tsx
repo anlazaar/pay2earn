@@ -22,18 +22,30 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError("Invalid email or password.");
+      if (result?.error) {
+        setError("Invalid email or password.");
+        setIsLoading(false);
+      } else {
+        // 🟢 FIX START
+        // 1. Force a router refresh to update server components
+        router.refresh();
+
+        // 2. Use window.location.href instead of router.push
+        // This forces a hard navigation, ensuring the new Session Cookie
+        // is sent to the server and breaking any client-side cache loops.
+        window.location.href = "/dashboard-router";
+        // 🟢 FIX END
+      }
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
       setIsLoading(false);
-    } else {
-      router.refresh();
-      router.push("/dashboard-router");
     }
   };
 

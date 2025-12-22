@@ -1,4 +1,3 @@
-// src/app/(dashboard)/layout.tsx
 import { auth } from "@/auth";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -10,8 +9,14 @@ import {
   Settings,
   LogOut,
   CreditCard,
+  History,
+  Wallet,
+  ScanLine,
+  Gift,
+  ShieldCheck,
+  Building2,
+  BarChart3,
 } from "lucide-react";
-import { signOut } from "@/auth"; // We'll handle signout via server action or client button
 
 export default async function DashboardLayout({
   children,
@@ -19,18 +24,65 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  const role = session?.user?.role;
 
-  // Navigation items based on generic role (you can filter these later based on specific roles)
-  const navItems = [
+  // 🟢 1. Define menus for specific roles
+  const adminNavItems = [
+    { name: "System Overview", href: "/admin", icon: BarChart3 },
+    { name: "Manage Businesses", href: "/admin/businesses", icon: Building2 },
+    { name: "Global Settings", href: "#", icon: ShieldCheck },
+  ];
+
+  const businessNavItems = [
     { name: "Overview", href: "/business", icon: LayoutDashboard },
-    { name: "Programs", href: "/business", icon: CreditCard }, // Points to same for now
-    { name: "Staff / Waiters", href: "/waiter", icon: Users },
+    { name: "Programs", href: "/business", icon: CreditCard },
+    { name: "Staff / Waiters", href: "/business/waiters", icon: Users },
     { name: "Settings", href: "#", icon: Settings },
   ];
 
+  const waiterNavItems = [
+    { name: "POS Terminal", href: "/waiter", icon: QrCode },
+    { name: "History", href: "#", icon: History },
+  ];
+
+  const clientNavItems = [
+    { name: "My Wallet", href: "/client", icon: Wallet },
+    { name: "Scan Code", href: "/client/scan", icon: ScanLine },
+    { name: "Rewards", href: "#", icon: Gift },
+  ];
+
+  // 🟢 2. Select the correct menu and text based on role
+  let navItems = businessNavItems; // Default fallback
+  let menuLabel = "Business Menu";
+  let pageTitle = "Dashboard";
+
+  switch (role) {
+    case "WAITER":
+      navItems = waiterNavItems;
+      menuLabel = "Staff Menu";
+      pageTitle = "Point of Sale";
+      break;
+    case "ADMIN":
+      navItems = adminNavItems;
+      menuLabel = "Administration";
+      pageTitle = "System Admin";
+      break;
+    case "CLIENT":
+      navItems = clientNavItems;
+      menuLabel = "Client Menu";
+      pageTitle = "My Wallet";
+      break;
+    case "BUSINESS":
+    default:
+      navItems = businessNavItems;
+      menuLabel = "Business Menu";
+      pageTitle = "Dashboard";
+      break;
+  }
+
   return (
     <div className="min-h-screen bg-background flex">
-      {/* 🟢 SIDEBAR (Desktop) */}
+      {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border/50 bg-card/30 backdrop-blur-xl h-screen sticky top-0">
         <div className="h-16 flex items-center px-6 border-b border-border/50">
           <div className="flex items-center gap-2">
@@ -43,7 +95,7 @@ export default async function DashboardLayout({
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <p className="px-4 text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
-            Menu
+            {menuLabel}
           </p>
           {navItems.map((item) => (
             <Link key={item.name} href={item.href}>
@@ -72,6 +124,7 @@ export default async function DashboardLayout({
               </p>
             </div>
           </div>
+          {/* Use API route for signout to ensure clean session clearing */}
           <Link href="/api/auth/signout">
             <Button
               variant="outline"
@@ -83,25 +136,18 @@ export default async function DashboardLayout({
         </div>
       </aside>
 
-      {/* 🟢 MAIN CONTENT AREA */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Navbar */}
         <header className="h-16 flex items-center justify-between px-6 border-b border-border/50 bg-background/50 backdrop-blur-md sticky top-0 z-10">
-          <h1 className="font-semibold text-lg md:hidden">Loyvo</h1>{" "}
-          {/* Mobile Title */}
+          <h1 className="font-semibold text-lg md:hidden">Loyvo</h1>
           <div className="hidden md:block text-sm text-muted-foreground">
-            Welcome back,{" "}
-            <span className="text-foreground font-medium">
-              {session?.user?.name}
-            </span>
+            <span className="text-foreground font-medium">{pageTitle}</span>
           </div>
           <div className="flex items-center gap-4">
-            {/* THE THEME TOGGLE IS BACK HERE */}
             <ThemeToggle />
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-secondary/20">
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
