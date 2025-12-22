@@ -1,0 +1,145 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  BUSINESS
+  WAITER
+  CLIENT
+}
+
+enum Tier {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+enum RewardType {
+  FREE_ITEM
+  DISCOUNT
+  CUSTOM
+}
+
+// 2.1 Users
+model User {
+  id            String    @id @default(uuid())
+  role          Role      @default(CLIENT)
+  username      String?   @unique
+  email         String    @unique
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  businessOwned Business? @relation("OwnerBusiness")
+  
+  // For Waiters: Which business do they work for?
+  employerId    String?
+  employer      Business? @relation("StaffBusiness", fields: [employerId], references: [id])
+  
+  salesProcessed Purchase[]
+  clientProfile Client?
+}
+
+// 2.2 Business
+model Business {
+  id                 String   @id @default(uuid())
+  name               String
+  tier               Tier     @default(BASIC)
+  subscriptionStatus String   @default("active")
+  createdAt          DateTime @default(now())
+
+  ownerId            String   @unique
+  owner              User     @relation("OwnerBusiness", fields: [ownerId], references: [id])
+  
+  staff              User[]   @relation("StaffBusiness")
+  loyaltyPrograms    LoyaltyProgram[]
+  products           Product[]
+  purchases          Purchase[]
+}
+
+// 2.3 Loyalty Programs
+model LoyaltyProgram {
+  id                String   @id @default(uuid())
+  name              String
+  rewardType        RewardType
+  rewardValue       String
+  pointsThreshold   Int
+  calculationMethod String
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  businessId        String
+  business          Business @relation(fields: [businessId], references: [id])
+  clientProgress    ClientProgress[]
+}
+
+// 2.4 Products
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  price       Decimal  @db.Decimal(10, 2)
+  points      Int?
+  createdAt   DateTime @default(now())
+
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+}
+
+// 2.5 Clients
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+
+  purchases Purchase[]
+  progress  ClientProgress[]
+}
+
+// 2.6 Purchases / QR Codes
+model Purchase {
+  id           String    @id @default(uuid())
+  qrCode       String    @unique
+  products     Json
+  totalAmount  Decimal   @db.Decimal(10, 2)
+  pointsAwarded Int
+  redeemed     Boolean   @default(false)
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+
+  businessId   String
+  business     Business  @relation(fields: [businessId], references: [id])
+  
+  waiterId     String
+  waiter       User      @relation(fields: [waiterId], references: [id])
+  
+  clientId     String?
+  client       Client?   @relation(fields: [clientId], references: [id])
+}
+
+// 2.7 Client Progress
+model ClientProgress {
+  id                String   @id @default(uuid())
+  pointsAccumulated Int      @default(0)
+  rewardsRedeemed   Json     @default("[]") 
+  lastUpdated       DateTime @default(now())
+
+  clientId          String
+  client            Client   @relation(fields: [clientId], references: [id])
+  
+  programId         String
+  program           LoyaltyProgram @relation(fields: [programId], references: [id])
+
+  @@unique([clientId, programId])
+}
