@@ -17,11 +17,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; // Ensure you have shadcn table or use standard divs
+} from "@/components/ui/table";
 import { Loader2, ShieldAlert, CheckCircle } from "lucide-react";
-
-// Helper for table structure if shadcn table not installed:
-// You can just use standard HTML <table> with tailwind classes.
 
 export default function AdminBusinessesPage() {
   const [businesses, setBusinesses] = useState<any[]>([]);
@@ -34,7 +31,7 @@ export default function AdminBusinessesPage() {
     }
     setLoading(false);
   };
-  
+
   useEffect(() => {
     fetchBusinesses();
   }, []);
@@ -71,30 +68,28 @@ export default function AdminBusinessesPage() {
       </CardHeader>
       <CardContent className="p-0">
         <div className="rounded-md border bg-card">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-muted/50 border-b">
-              <tr>
-                <th className="p-4 font-medium">Business Name</th>
-                <th className="p-4 font-medium">Owner Email</th>
-                <th className="p-4 font-medium">Tier</th>
-                <th className="p-4 font-medium">Status</th>
-                <th className="p-4 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          {/* 🟢 Replaced standard <table> with Shadcn <Table> components */}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Business Name</TableHead>
+                <TableHead>Owner Email</TableHead>
+                <TableHead>Tier</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {businesses.map((biz) => (
-                <tr
-                  key={biz.id}
-                  className="border-b transition-colors hover:bg-muted/50"
-                >
-                  <td className="p-4 font-medium">{biz.name}</td>
-                  <td className="p-4 text-muted-foreground">
+                <TableRow key={biz.id}>
+                  <TableCell className="font-medium">{biz.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
                     {biz.owner.email}
-                  </td>
-                  <td className="p-4">
+                  </TableCell>
+                  <TableCell>
                     <Badge variant="outline">{biz.tier}</Badge>
-                  </td>
-                  <td className="p-4">
+                  </TableCell>
+                  <TableCell>
                     <Badge
                       variant={
                         biz.subscriptionStatus === "active"
@@ -104,8 +99,8 @@ export default function AdminBusinessesPage() {
                     >
                       {biz.subscriptionStatus}
                     </Badge>
-                  </td>
-                  <td className="p-4 text-right">
+                  </TableCell>
+                  <TableCell className="text-right">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -128,11 +123,11 @@ export default function AdminBusinessesPage() {
                         </>
                       )}
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
     </Card>

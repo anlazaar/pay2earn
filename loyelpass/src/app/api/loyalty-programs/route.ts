@@ -45,10 +45,9 @@ export async function POST(req: Request) {
       rewardType,
       rewardValue,
       pointsThreshold,
-      calculationMethod,
+      pointsPerCurrency, // Get this from body
     } = body;
 
-    // 1. Get Business ID
     const business = await prisma.business.findUnique({
       where: { ownerId: session.user.id },
     });
@@ -60,14 +59,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Create Program in DB
     const newProgram = await prisma.loyaltyProgram.create({
       data: {
         name,
-        rewardType, // e.g., 'FREE_ITEM'
-        rewardValue, // e.g., 'Free Coffee'
-        pointsThreshold: parseInt(pointsThreshold), // Ensure it's a number
-        calculationMethod, // e.g., 'by_amount'
+        rewardType,
+        rewardValue,
+        pointsThreshold: parseInt(pointsThreshold),
+        pointsPerCurrency: parseFloat(pointsPerCurrency || "1.0"),
+        calculationMethod: "by_amount",
         businessId: business.id,
       },
     });

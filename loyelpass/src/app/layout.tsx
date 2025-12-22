@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Loyvo - Next Gen Loyalty",
+  title: "loylpass - Next Gen Loyalty",
   description: "Customer retention made simple.",
 };
 

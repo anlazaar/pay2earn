@@ -89,7 +89,7 @@ export default async function DashboardLayout({
             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
               <QrCode className="text-primary-foreground w-5 h-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight">Loyvo</span>
+            <span className="font-bold text-lg tracking-tight">loylpass</span>
           </div>
         </div>
 
@@ -139,7 +139,7 @@ export default async function DashboardLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 flex items-center justify-between px-6 border-b border-border/50 bg-background/50 backdrop-blur-md sticky top-0 z-10">
-          <h1 className="font-semibold text-lg md:hidden">Loyvo</h1>
+          <h1 className="font-semibold text-lg md:hidden">loylpass</h1>
           <div className="hidden md:block text-sm text-muted-foreground">
             <span className="text-foreground font-medium">{pageTitle}</span>
           </div>

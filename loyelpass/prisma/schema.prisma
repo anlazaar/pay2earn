@@ -75,6 +75,7 @@ model LoyaltyProgram {
   calculationMethod String
   active            Boolean  @default(true)
   createdAt         DateTime @default(now())
+  pointsPerCurrency Float    @default(1.0)
 
   businessId        String
   business          Business @relation(fields: [businessId], references: [id])
@@ -144,17 +145,17 @@ model ClientProgress {
   @@unique([clientId, programId])
 }
 
-model Redemption {
-  id          String   @id @default(uuid())
-  rewardName  String   // e.g. "Free Coffee"
-  pointsCost  Int
-  qrCode      String   @unique // The secret token for the waiter to scan
-  used        Boolean  @default(false)
-  createdAt   DateTime @default(now())
+// model Redemption {
+//   id          String   @id @default(uuid())
+//   rewardName  String   // e.g. "Free Coffee"
+//   pointsCost  Int
+//   qrCode      String   @unique // The secret token for the waiter to scan
+//   used        Boolean  @default(false)
+//   createdAt   DateTime @default(now())
 
-  clientId    String
-  client      Client   @relation(fields: [clientId], references: [id])
+//   clientId    String
+//   client      Client   @relation(fields: [clientId], references: [id])
 
-  businessId  String
-  business    Business @relation(fields: [businessId], references: [id])
-}
+//   businessId  String
+//   business    Business @relation(fields: [businessId], references: [id])
+// }
