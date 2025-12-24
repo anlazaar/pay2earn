@@ -63,6 +63,8 @@ model Business {
   loyaltyPrograms    LoyaltyProgram[]
   products           Product[]
   purchases          Purchase[]
+
+  redemptions        RedemptionTicket[]
 }
 
 // 2.3 Loyalty Programs
@@ -80,6 +82,8 @@ model LoyaltyProgram {
   businessId        String
   business          Business @relation(fields: [businessId], references: [id])
   clientProgress    ClientProgress[]
+
+  redemptions        RedemptionTicket[]
 }
 
 // 2.4 Products
@@ -106,6 +110,8 @@ model Client {
 
   purchases Purchase[]
   progress  ClientProgress[]
+
+  redemptions        RedemptionTicket[]
 }
 
 // 2.6 Purchases / QR Codes
@@ -145,17 +151,21 @@ model ClientProgress {
   @@unique([clientId, programId])
 }
 
-// model Redemption {
-//   id          String   @id @default(uuid())
-//   rewardName  String   // e.g. "Free Coffee"
-//   pointsCost  Int
-//   qrCode      String   @unique // The secret token for the waiter to scan
-//   used        Boolean  @default(false)
-//   createdAt   DateTime @default(now())
 
-//   clientId    String
-//   client      Client   @relation(fields: [clientId], references: [id])
+model RedemptionTicket {
+  id        String   @id @default(uuid())
+  ticketId  String   @unique // Secure random string for the QR
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
-//   businessId  String
-//   business    Business @relation(fields: [businessId], references: [id])
-// }
+  // Relations
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  
+  programId String
+  program   LoyaltyProgram @relation(fields: [programId], references: [id])
+}
