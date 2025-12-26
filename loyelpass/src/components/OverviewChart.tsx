@@ -17,10 +17,6 @@ interface Props {
   className?: string;
 }
 
-/**
- * Custom Tooltip Component
- * Renders a glassmorphism card with the Golden/Black theme
- */
 const CustomTooltip = ({
   active,
   payload,
@@ -28,16 +24,16 @@ const CustomTooltip = ({
 }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-primary/20 bg-background/80 backdrop-blur-xl px-4 py-3 shadow-2xl shadow-black/10 ring-1 ring-white/10">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">
+      <div className="rounded-lg border border-border bg-popover/95 backdrop-blur shadow-xl px-3 py-2 text-xs">
+        <p className="text-muted-foreground mb-1 uppercase tracking-wider font-semibold text-[10px]">
           {label}
         </p>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
-          <span className="text-xl font-bold text-foreground font-mono">
+          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <span className="font-mono font-medium text-foreground text-sm">
             {payload[0].value?.toLocaleString()}
           </span>
-          <span className="text-xs text-muted-foreground font-medium">pts</span>
+          <span className="text-muted-foreground">pts</span>
         </div>
       </div>
     );
@@ -47,24 +43,16 @@ const CustomTooltip = ({
 
 export function OverviewChart({ data, className }: Props) {
   return (
-    <div className={cn("w-full h-[350px] relative group", className)}>
-      {/* Optional: Add a subtle glow behind the chart for extra 'pop' in dark mode */}
-      <div className="absolute inset-0 bg-primary/5 blur-3xl -z-10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
+    <div className={cn("w-full h-[300px] relative", className)}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
         >
           <defs>
-            {/* 
-              GOLDEN GRADIENT DEFINITION 
-              We use CSS variables directly. Note: 'var(--primary)' works because 
-              modern browsers support CSS vars in SVG attributes.
-            */}
             <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4} />
-              <stop offset="50%" stopColor="var(--primary)" stopOpacity={0.1} />
+              {/* 🟢 FIX: Use var(--primary) directly, no hsl() wrapper */}
+              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
               <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
             </linearGradient>
           </defs>
@@ -73,36 +61,35 @@ export function OverviewChart({ data, className }: Props) {
             strokeDasharray="3 3"
             vertical={false}
             stroke="var(--border)"
-            opacity={0.4}
+            strokeOpacity={0.4}
           />
 
           <XAxis
             dataKey="displayDate"
-            stroke="var(--muted-foreground)"
-            fontSize={10}
-            tickLine={false}
             axisLine={false}
-            tickMargin={15}
+            tickLine={false}
+            tickMargin={10}
             minTickGap={30}
-            className="uppercase tracking-wider font-semibold"
+            style={{ fontSize: 10, fontWeight: 500 }}
+            // 🟢 FIX: Use var(--muted-foreground) directly
+            tick={{ fill: "var(--muted-foreground)" }}
           />
 
           <YAxis
-            stroke="var(--muted-foreground)"
-            fontSize={10}
-            tickLine={false}
             axisLine={false}
+            tickLine={false}
             tickFormatter={(value) => `${value}`}
-            className="font-mono"
+            style={{ fontSize: 10, fontFamily: "monospace" }}
+            // 🟢 FIX: Use var(--muted-foreground) directly
+            tick={{ fill: "var(--muted-foreground)" }}
           />
 
           <Tooltip
             content={<CustomTooltip />}
             cursor={{
-              stroke: "var(--primary)",
+              stroke: "var(--border)",
               strokeWidth: 1,
               strokeDasharray: "4 4",
-              opacity: 0.5,
             }}
           />
 
@@ -112,15 +99,11 @@ export function OverviewChart({ data, className }: Props) {
             stroke="var(--primary)"
             strokeWidth={2}
             fill="url(#colorPoints)"
-            animationDuration={1500}
-            animationEasing="ease-in-out"
+            animationDuration={1000}
             activeDot={{
-              r: 6,
-              style: {
-                fill: "var(--background)",
-                stroke: "var(--primary)",
-                strokeWidth: 2,
-              },
+              r: 4,
+              strokeWidth: 0,
+              fill: "var(--primary)",
             }}
           />
         </AreaChart>

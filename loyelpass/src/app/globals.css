@@ -25,100 +25,81 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  --image-gradient-mesh: var(--gradient-mesh);
-  --image-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  /* Modern "Aurora" Gradient for backgrounds */
+  --image-glow: radial-gradient(
+      circle at 50% 0%,
+      rgba(99, 102, 241, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(139, 92, 246, 0.1) 0%,
+      transparent 50%
+    );
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --animate-in: fade-in 0.3s ease-out;
 }
 
 :root {
-  --radius: 0.5rem; /* Sharper corners for premium feel */
+  --radius: 0.75rem; /* Modern curvature */
 
-  /* --- LIGHT MODE: Smoke White & Sharp Black --- */
-  /* Smoke White Background */
-  --background: oklch(0.97 0.005 85);
-  /* Deep Black Text */
-  --foreground: oklch(0.15 0 0);
+  /* --- LIGHT MODE: Clean, Crisp, Tech --- */
+  --background: oklch(0.99 0 0); /* Pure White */
+  --foreground: oklch(0.12 0.01 240); /* Soft Black */
 
-  /* Cards: Pure White */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
+  --card-foreground: oklch(0.12 0.01 240);
 
-  /* Primary: Metallic Gold */
-  --primary: oklch(0.72 0.16 75);
-  --primary-foreground: oklch(0.1 0.05 75); /* Dark text on gold button */
+  /* Primary: Electric Indigo */
+  --primary: oklch(0.55 0.22 260); /* Vibrant Blue/Purple */
+  --primary-foreground: oklch(0.98 0 0);
 
-  /* Secondary: Light Grey (Smoke) */
-  --secondary: oklch(0.94 0 0);
-  --secondary-foreground: oklch(0.15 0 0);
+  --secondary: oklch(0.96 0.01 240); /* Light Gray */
+  --secondary-foreground: oklch(0.12 0.01 240);
 
-  /* Muted */
-  --muted: oklch(0.92 0 0);
-  --muted-foreground: oklch(0.45 0 0);
+  --muted: oklch(0.96 0.01 240);
+  --muted-foreground: oklch(0.55 0.02 240);
 
-  /* Accent: Darker Gold/Bronze */
-  --accent: oklch(0.85 0.1 85);
-  --accent-foreground: oklch(0.2 0.05 85);
+  --accent: oklch(0.96 0.01 240);
+  --accent-foreground: oklch(0.12 0.01 240);
 
-  --destructive: oklch(0.55 0.2 25);
+  --destructive: oklch(0.57 0.2 20);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.9 0 0);
-  --ring: oklch(0.72 0.16 75 / 0.5); /* Gold Ring */
-
-  /* Light Gold Mesh */
-  --gradient-mesh: radial-gradient(
-      at 0% 0%,
-      hsla(45, 60%, 85%, 0.3) 0,
-      transparent 50%
-    ),
-    radial-gradient(at 100% 0%, hsla(30, 40%, 90%, 0.5) 0, transparent 50%);
+  --border: oklch(0.92 0.01 240);
+  --input: oklch(0.92 0.01 240);
+  --ring: oklch(0.55 0.22 260);
 }
 
 .dark {
-  /* --- DARK MODE: Matte Black, Noise & Gold --- */
-  /* Very Dark Grey (Almost Black) */
-  --background: oklch(0.12 0.01 80);
-  /* Soft White Text */
-  --foreground: oklch(0.95 0.01 85);
+  /* --- DARK MODE: Deep Space, High Contrast --- */
+  --background: oklch(0.08 0.01 240); /* Deep Zinc Black */
+  --foreground: oklch(0.94 0.01 240); /* White-ish */
 
-  /* Cards: Slightly lighter Black */
-  --card: oklch(0.15 0.01 80);
-  --card-foreground: oklch(0.95 0.01 85);
+  --card: oklch(0.11 0.01 240); /* Slightly lighter black */
+  --card-foreground: oklch(0.94 0.01 240);
 
-  /* Primary: Luxurious Gold */
-  --primary: oklch(0.75 0.16 75);
-  --primary-foreground: oklch(0.1 0.05 75);
+  /* Primary: Neon Indigo (Brighter for Dark Mode) */
+  --primary: oklch(0.65 0.22 260);
+  --primary-foreground: oklch(0.98 0 0);
 
-  /* Secondary: Dark Charcoal */
-  --secondary: oklch(0.18 0.01 80);
-  --secondary-foreground: oklch(0.95 0.01 85);
+  --secondary: oklch(0.16 0.01 240);
+  --secondary-foreground: oklch(0.94 0.01 240);
 
-  --muted: oklch(0.2 0.01 80);
-  --muted-foreground: oklch(0.6 0.01 80);
+  --muted: oklch(0.16 0.01 240);
+  --muted-foreground: oklch(0.6 0.01 240);
 
-  --accent: oklch(0.25 0.05 75);
-  --accent-foreground: oklch(0.95 0.01 85);
+  --accent: oklch(0.16 0.01 240);
+  --accent-foreground: oklch(0.94 0.01 240);
 
-  --destructive: oklch(0.5 0.2 25);
+  --destructive: oklch(0.5 0.2 20);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.22 0.01 80);
-  --input: oklch(0.22 0.01 80);
-  --ring: oklch(0.75 0.16 75 / 0.4);
-
-  /* Dark Gold Mesh */
-  --gradient-mesh: radial-gradient(
-      at 0% 0%,
-      hsla(45, 80%, 10%, 1) 0,
-      transparent 50%
-    ),
-    radial-gradient(at 50% -20%, hsla(40, 70%, 15%, 0.5) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(45, 80%, 8%, 1) 0, transparent 50%);
+  --border: oklch(0.2 0.01 240);
+  --input: oklch(0.2 0.01 240);
+  --ring: oklch(0.65 0.22 260);
 }
 
 @layer base {
@@ -126,30 +107,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased relative;
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
 
-  /* Apply Noise Texture */
+  /* Subtle Aurora Glow Top */
   body::before {
     content: "";
-    position: fixed;
-    inset: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    /* Use the noise variable defined in theme */
-    background-image: var(--image-noise);
-    opacity: 0.4; /* Adjusts intensity of the noise */
-    pointer-events: none;
-    z-index: 50;
-    mix-blend-mode: overlay;
-  }
-
-  /* Apply Mesh Gradient behind everything */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: var(--gradient-mesh);
+    height: 100vh;
+    background: var(--image-glow);
     z-index: -1;
     pointer-events: none;
   }

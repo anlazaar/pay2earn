@@ -22,6 +22,8 @@ import {
   BarChart3,
   Menu,
   X,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
 
 // 1. Map String Keys to Actual Icons
@@ -43,7 +45,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 export interface NavItem {
   name: string;
   href: string;
-  iconKey: string; // Changed from 'icon' component to string key
+  iconKey: string;
 }
 
 interface DashboardShellProps {
@@ -78,42 +80,43 @@ export function DashboardShell({
     isMobile?: boolean;
   }) => {
     const isActive = pathname === item.href;
-    const IconComponent = ICON_MAP[item.iconKey] || LayoutDashboard; // Fallback
+    const IconComponent = ICON_MAP[item.iconKey] || LayoutDashboard;
 
     return (
       <Link
         href={item.href}
         onClick={() => isMobile && setIsMobileMenuOpen(false)}
+        className="block mb-1"
       >
         <div
           className={cn(
-            "group flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-300 mb-1 border border-transparent",
+            "group flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200 text-sm font-medium",
             isActive
-              ? "bg-primary/10 border-primary/20 text-primary font-semibold shadow-[0_0_15px_-3px_var(--color-primary)]"
-              : "text-muted-foreground hover:text-foreground hover:bg-white/5 dark:hover:bg-white/5"
+              ? "bg-secondary text-foreground shadow-sm ring-1 ring-border/50"
+              : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
           )}
         >
-          <IconComponent
-            className={cn(
-              "h-5 w-5 transition-transform duration-300",
-              isActive
-                ? "scale-110 text-primary"
-                : "group-hover:text-foreground"
-            )}
-          />
-          <span className="tracking-wide text-sm">{item.name}</span>
+          <div className="flex items-center gap-3">
+            <IconComponent
+              className={cn(
+                "h-4 w-4 transition-colors",
+                isActive
+                  ? "text-primary"
+                  : "text-muted-foreground group-hover:text-foreground"
+              )}
+            />
+            <span>{item.name}</span>
+          </div>
 
-          {/* Golden Glow Dot for Active State */}
-          {isActive && (
-            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_2px_var(--color-primary)] animate-pulse" />
-          )}
+          {/* Subtle Indicator for Active State */}
+          {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
         </div>
       </Link>
     );
   };
 
   return (
-    <div className="min-h-screen flex text-foreground">
+    <div className="min-h-screen flex bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       {/* --- MOBILE OVERLAY --- */}
       {isMobileMenuOpen && (
         <div
@@ -125,74 +128,78 @@ export function DashboardShell({
       {/* --- SIDEBAR --- */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-card/80 backdrop-blur-2xl border-r border-border shadow-2xl transition-transform duration-300 ease-out md:translate-x-0 md:static md:shadow-none md:flex md:flex-col",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transition-transform duration-300 ease-out md:translate-x-0 md:static flex flex-col",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Brand Area */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-border/40">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 bg-gradient-to-tr from-yellow-600 to-yellow-300 rounded-lg flex items-center justify-center shadow-lg shadow-yellow-500/20">
-              <QrCode className="text-black w-5 h-5" />
+        <div className="h-16 flex items-center justify-between px-4 border-b border-border/50">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 bg-primary/10 border border-primary/20 rounded-md flex items-center justify-center text-primary">
+              <Layers className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xl tracking-tight text-foreground">
+            <span className="font-semibold text-lg tracking-tight">
               loylpass
             </span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden h-8 w-8"
             onClick={toggleMenu}
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <p className="px-3 text-[10px] font-bold text-muted-foreground mb-4 uppercase tracking-[0.2em]">
-            {menuLabel}
-          </p>
-          {navItems.map((item) => (
-            <NavLink key={item.name} item={item} isMobile={true} />
-          ))}
+        <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto">
+          {/* Main Group */}
+          <div>
+            <p className="px-3 text-[10px] font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+              {menuLabel}
+            </p>
+            <div className="space-y-0.5">
+              {navItems.map((item) => (
+                <NavLink key={item.name} item={item} isMobile={true} />
+              ))}
+            </div>
+          </div>
         </nav>
 
         {/* User Footer */}
-        <div className="p-4 border-t border-border/40 bg-muted/20">
-          <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border/50 bg-card/40 mb-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center text-black font-bold text-xs shadow-md">
+        <div className="p-3 border-t border-border/50">
+          <div className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group mb-2">
+            <div className="h-8 w-8 rounded bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border group-hover:border-primary/50 transition-colors">
               {user.name?.[0] || "U"}
             </div>
             <div className="overflow-hidden flex-1">
               <p className="text-sm font-medium truncate text-foreground">
                 {user.name}
               </p>
-              <p className="text-[10px] uppercase font-bold text-primary tracking-wider">
-                {user.role}
+              <p className="text-[10px] text-muted-foreground truncate">
+                {user.role} workspace
               </p>
             </div>
           </div>
 
-          <Link href="/api/auth/signout">
+          <Link href="/api/auth/signout" className="block">
             <Button
               variant="outline"
-              className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:border-destructive/50 hover:bg-destructive/5 border-border/50 transition-all"
+              size="sm"
+              className="w-full justify-start gap-2 text-muted-foreground h-8 text-xs border-dashed border-border/60 hover:border-destructive/50 hover:text-destructive hover:bg-destructive/5"
             >
-              <LogOut className="h-4 w-4" />
-              <span className="text-xs font-medium uppercase tracking-wider">
-                Sign Out
-              </span>
+              <LogOut className="h-3 w-3" />
+              Sign Out
             </Button>
           </Link>
         </div>
       </aside>
 
       {/* --- CONTENT AREA --- */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="h-20 flex items-center justify-between px-6 md:px-10 border-b border-border/40 bg-background/60 backdrop-blur-md sticky top-0 z-30">
+        <header className="h-16 flex items-center justify-between px-6 border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -200,23 +207,29 @@ export function DashboardShell({
               className="md:hidden -ml-2"
               onClick={toggleMenu}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="font-bold text-lg text-foreground tracking-tight">
-                {pageTitle}
-              </h1>
-              <span className="text-xs text-muted-foreground hidden md:block">
-                Welcome back, {user.name}
+
+            {/* Breadcrumb-like Title */}
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground hidden sm:inline-block">
+                Dashboard
               </span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground/50 hidden sm:inline-block" />
+              <span className="font-medium text-foreground">{pageTitle}</span>
             </div>
           </div>
-          <ThemeToggle />
+
+          <div className="flex items-center gap-3">
+            {/* Optional: Add a 'Feedback' or 'Help' small button here */}
+            <div className="h-4 w-px bg-border hidden sm:block" />
+            <ThemeToggle />
+          </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-          <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-3 duration-700">
+        <main className="flex-1 p-6 md:p-10 overflow-y-auto bg-secondary/5">
+          <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
             {children}
           </div>
         </main>

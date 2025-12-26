@@ -17,7 +17,10 @@ import {
   TrendingUp,
   Sparkles,
   Store,
+  ArrowUpRight,
+  MoreHorizontal,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const prisma = new PrismaClient();
 
@@ -92,149 +95,170 @@ export default async function BusinessDashboard() {
   if (!data)
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <Store className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground">Loading Dashboard...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="h-12 w-12 rounded-xl bg-secondary animate-pulse" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Store className="h-6 w-6 text-muted-foreground/50" />
+            </div>
+          </div>
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">
+            Initializing Dashboard...
+          </p>
         </div>
       </div>
     );
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-10">
-      {/* 1. Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/40 pb-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
+      {/* 1. Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-6">
         <div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-            {data.businessName}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-base">
-            Here's your loyalty performance overview.
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">
+              {data.businessName}
+            </h2>
+            <Badge
+              variant="outline"
+              className="text-[10px] h-5 border-green-500/20 text-green-600 bg-green-500/10"
+            >
+              Live
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Overview of your loyalty performance.
           </p>
         </div>
         <CreateProgramModal />
       </div>
 
-      {/* 2. Stats Grid (Equal Widths) */}
+      {/* 2. Stats Grid (Engineered) */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Clients */}
-        <div className="group relative overflow-hidden rounded-3xl border border-white/20 bg-white/50 dark:bg-white/5 backdrop-blur-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-orange-500/10 blur-2xl group-hover:bg-orange-500/20 transition-all"></div>
+        <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:border-border/80">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Total Clients
             </span>
-            <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
-              <Users className="h-5 w-5" />
-            </div>
+            <Users className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-foreground">
+            <span className="text-3xl font-semibold tracking-tight text-foreground">
               {data.totalClients}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">
-              unique
+            <span className="text-xs font-medium text-emerald-500 flex items-center bg-emerald-500/10 px-1.5 py-0.5 rounded">
+              +12% <ArrowUpRight className="h-3 w-3 ml-0.5" />
             </span>
           </div>
         </div>
 
         {/* Points */}
-        <div className="group relative overflow-hidden rounded-3xl border border-white/20 bg-white/50 dark:bg-white/5 backdrop-blur-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-green-500/10 blur-2xl group-hover:bg-green-500/20 transition-all"></div>
+        <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:border-border/80">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Points Issued
             </span>
-            <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
-              <TrendingUp className="h-5 w-5" />
-            </div>
+            <TrendingUp className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-foreground">
+            <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
               {data.totalPoints.toLocaleString()}
-            </span>
-            <span className="text-sm font-medium text-muted-foreground">
-              pts
             </span>
           </div>
         </div>
 
         {/* Programs */}
-        <div className="group relative overflow-hidden rounded-3xl border border-white/20 bg-white/50 dark:bg-white/5 backdrop-blur-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-blue-500/10 blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+        <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:border-border/80">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Active Campaigns
             </span>
-            <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-              <Sparkles className="h-5 w-5" />
-            </div>
+            <Sparkles className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-foreground">
+            <span className="text-3xl font-semibold tracking-tight text-foreground">
               {data.programs.filter((p) => p.active).length}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">
-              live
+            <span className="text-sm text-muted-foreground">
+              / {data.programs.length} total
             </span>
           </div>
         </div>
       </div>
 
-      {/* 3. Main Content (Fixed: Equal Width Split) */}
+      {/* 3. Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Chart Section */}
-        <Card className="border-none shadow-lg bg-white/40 dark:bg-white/5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 rounded-3xl h-full">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
-              Activity Trend
-            </CardTitle>
-            <CardDescription>Points redeemed last 7 days.</CardDescription>
+        <Card className="border border-border/50 shadow-sm bg-card rounded-xl">
+          <CardHeader className="pb-2 border-b border-border/50 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                  Activity Trend
+                </CardTitle>
+                <CardDescription className="text-xs mt-1">
+                  Points redeemed (last 7 days)
+                </CardDescription>
+              </div>
+              <button className="text-muted-foreground hover:text-foreground">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2 pl-0">
             <OverviewChart data={data.chartData} />
           </CardContent>
         </Card>
 
         {/* Programs List Section */}
-        <Card className="border-none shadow-lg bg-white/40 dark:bg-white/5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 rounded-3xl h-full">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" />
-              Active Programs
-            </CardTitle>
-            <CardDescription>Top performing campaigns.</CardDescription>
+        <Card className="border border-border/50 shadow-sm bg-card rounded-xl">
+          <CardHeader className="pb-2 border-b border-border/50 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                  Active Programs
+                </CardTitle>
+                <CardDescription className="text-xs mt-1">
+                  Top performing campaigns
+                </CardDescription>
+              </div>
+              <button className="text-muted-foreground hover:text-foreground">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {data.programs.slice(0, 4).map((program) => (
                 <div
                   key={program.id}
-                  className="group flex items-center justify-between p-3 rounded-2xl border border-transparent hover:border-border/50 hover:bg-white/50 dark:hover:bg-white/5 transition-all duration-300"
+                  className="group flex items-center justify-between p-3 rounded-lg border border-transparent hover:bg-secondary/50 hover:border-border/50 transition-all cursor-default"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform">
-                      <Gift className="h-5 w-5" />
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                      <Gift className="h-4 w-4" />
                     </div>
-                    <div>
-                      <p className="font-bold text-sm text-foreground">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-foreground truncate max-w-[140px]">
                         {program.name}
                       </p>
-                      <p className="text-xs font-medium text-muted-foreground/80">
+                      <p className="text-xs text-muted-foreground truncate">
                         Reward: {program.rewardValue}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-foreground">
-                      {program.pointsThreshold}{" "}
-                      <span className="text-[10px] text-muted-foreground uppercase">
-                        pts
-                      </span>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-semibold text-foreground tabular-nums">
+                      {program.pointsThreshold}
                     </p>
                     <Badge
-                      variant={program.active ? "default" : "secondary"}
-                      className="text-[10px] h-5 px-2"
+                      variant="outline"
+                      className={cn(
+                        "text-[10px] h-4 px-1.5 border-0 font-normal",
+                        program.active
+                          ? "bg-green-500/10 text-green-600"
+                          : "bg-gray-100 text-gray-500"
+                      )}
                     >
                       {program.active ? "Active" : "Paused"}
                     </Badge>
@@ -243,12 +267,15 @@ export default async function BusinessDashboard() {
               ))}
 
               {data.programs.length === 0 && (
-                <div className="text-center py-8">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
-                    <Gift className="h-6 w-6 text-muted-foreground" />
+                <div className="flex flex-col items-center justify-center py-10 text-center border border-dashed border-border/50 rounded-lg bg-secondary/20">
+                  <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center mb-3">
+                    <Gift className="h-5 w-5 text-muted-foreground" />
                   </div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    No programs yet.
+                  <p className="text-sm font-medium text-foreground">
+                    No programs yet
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Create your first campaign to start.
                   </p>
                 </div>
               )}

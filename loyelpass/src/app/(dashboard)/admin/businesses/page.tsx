@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -18,9 +17,11 @@ import {
   Search,
   Building2,
   MoreHorizontal,
+  ArrowUpRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 // Interface for type safety
 interface Business {
@@ -70,11 +71,10 @@ export default function AdminBusinessesPage() {
         body: JSON.stringify({ businessId: id, status: newStatus }),
       });
     } catch (e) {
-      // Revert on error (omitted for brevity)
+      // Revert logic would go here
     }
   };
 
-  // Filter logic
   const filteredBusinesses = businesses.filter(
     (b) =>
       b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,50 +84,55 @@ export default function AdminBusinessesPage() {
   if (loading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <span className="text-xs text-muted-foreground font-medium">
+            Loading Registry...
+          </span>
+        </div>
       </div>
     );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       {/* 🟢 Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
             Business Registry
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Manage registered partners and their subscription status.
           </p>
         </div>
 
-        {/* Search Input */}
-        <div className="relative w-full md:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        {/* Search Input (Engineered) */}
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search businesses..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-background/50 border-border/50 focus-visible:ring-primary/30 rounded-xl"
+            className="pl-9 h-9 bg-background border-border focus-visible:ring-1 focus-visible:ring-primary text-sm"
           />
         </div>
       </div>
 
-      {/* 🟢 Premium Data Grid */}
-      <div className="rounded-[1.5rem] border border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
+      {/* 🟢 Data Grid */}
+      <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-muted/30">
-            <TableRow className="hover:bg-transparent border-b border-border/40">
-              <TableHead className="w-[300px] pl-6 h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
-                Business Details
+          <TableHeader className="bg-secondary/40">
+            <TableRow className="hover:bg-transparent border-b border-border/50">
+              <TableHead className="w-[300px] pl-6 h-10 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                Company
               </TableHead>
-              <TableHead className="h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
+              <TableHead className="h-10 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
                 Plan
               </TableHead>
-              <TableHead className="h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
+              <TableHead className="h-10 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
                 Status
               </TableHead>
-              <TableHead className="text-right pr-6 h-12 text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
+              <TableHead className="text-right pr-6 h-10 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
                 Actions
               </TableHead>
             </TableRow>
@@ -135,26 +140,28 @@ export default function AdminBusinessesPage() {
           <TableBody>
             {filteredBusinesses.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-32 text-center text-muted-foreground"
-                >
-                  No businesses found.
+                <TableCell colSpan={4} className="h-32 text-center">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground">
+                    <Building2 className="h-8 w-8 mb-2 opacity-20" />
+                    <span className="text-sm font-medium">
+                      No businesses found
+                    </span>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               filteredBusinesses.map((biz) => (
                 <TableRow
                   key={biz.id}
-                  className="group hover:bg-primary/5 border-b border-border/30 transition-colors"
+                  className="group hover:bg-secondary/30 border-b border-border/40 transition-colors"
                 >
-                  <TableCell className="pl-6 py-4">
+                  <TableCell className="pl-6 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center border border-border/50">
-                        <Building2 className="h-5 w-5 text-muted-foreground" />
+                      <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <Building2 className="h-4 w-4" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-semibold text-foreground tracking-tight">
+                        <span className="text-sm font-medium text-foreground tracking-tight">
                           {biz.name}
                         </span>
                         <span className="text-xs text-muted-foreground font-mono">
@@ -165,33 +172,25 @@ export default function AdminBusinessesPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div
-                      className={cn(
-                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
-                        biz.tier === "PRO"
-                          ? "bg-primary/10 text-primary border-primary/20"
-                          : "bg-muted text-muted-foreground border-border"
-                      )}
+                    <Badge
+                      variant="outline"
+                      className="font-normal text-[10px] h-5 border-border bg-background"
                     >
                       {biz.tier}
-                    </div>
+                    </Badge>
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span
+                    <div className="flex items-center gap-1.5">
+                      <div
                         className={cn(
-                          "relative flex h-2.5 w-2.5 rounded-full",
+                          "w-1.5 h-1.5 rounded-full",
                           biz.subscriptionStatus === "active"
                             ? "bg-emerald-500"
                             : "bg-red-500"
                         )}
-                      >
-                        {biz.subscriptionStatus === "active" && (
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        )}
-                      </span>
-                      <span className="text-sm font-medium capitalize">
+                      />
+                      <span className="text-xs text-foreground capitalize font-medium">
                         {biz.subscriptionStatus}
                       </span>
                     </div>
@@ -205,19 +204,20 @@ export default function AdminBusinessesPage() {
                         updateStatus(biz.id, biz.subscriptionStatus)
                       }
                       className={cn(
-                        "h-8 px-3 rounded-lg transition-all duration-300 font-medium",
+                        "h-7 px-2 text-xs font-medium opacity-0 group-hover:opacity-100 transition-all duration-200",
                         biz.subscriptionStatus === "active"
-                          ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
-                          : "text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+                          ? "text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                          : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
                       )}
                     >
                       {biz.subscriptionStatus === "active" ? (
                         <>
-                          <ShieldAlert className="w-3.5 h-3.5 mr-2" /> Block
+                          <ShieldAlert className="w-3 h-3 mr-1.5" /> Block
+                          Access
                         </>
                       ) : (
                         <>
-                          <CheckCircle className="w-3.5 h-3.5 mr-2" /> Unblock
+                          <CheckCircle className="w-3 h-3 mr-1.5" /> Unblock
                         </>
                       )}
                     </Button>

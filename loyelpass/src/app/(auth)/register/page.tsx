@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft, QrCode, Store, User } from "lucide-react";
-import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loader2, ArrowLeft, Layers, Store, User, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -39,12 +40,11 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          role: role, // Send the selected role
+          role: role,
         }),
       });
 
       if (res.ok) {
-        // Redirect to login on success
         router.push("/login?registered=true");
       } else {
         const data = await res.json();
@@ -58,79 +58,74 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background text-foreground">
-      {/* 🟢 Background Elements */}
-      <div className="absolute top-0 right-1/2 translate-x-1/2 w-[800px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] -z-10 opacity-50" />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-
-      {/* 🟢 Back Button */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="absolute top-8 left-8 z-20"
-      >
-        <Link href="/">
-          <Button
-            variant="ghost"
-            className="gap-2 pl-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Button>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center relative bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+      {/* 🟢 Navigation */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          href="/"
+          className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back</span>
         </Link>
-      </motion.div>
+      </div>
+
+      <div className="absolute top-6 right-6 z-20">
+        <ThemeToggle />
+      </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-sm z-10 p-6"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-[400px] px-6"
       >
-        <div className="flex flex-col items-center gap-2 mb-6 text-center">
-          <div className="h-12 w-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30">
-            <QrCode className="text-primary-foreground h-6 w-6" />
+        <div className="mb-8 text-center">
+          <div className="mx-auto w-10 h-10 mb-6 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center text-primary">
+            <Layers className="w-5 h-5" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">
-            Get Started
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Create your account
           </h1>
-          <p className="text-sm text-muted-foreground">Join LoyalPass today.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Get started with Loylpass today.
+          </p>
         </div>
 
-        {/* 🟢 Role Switcher (Apple Style Segmented Control) */}
-        <div className="bg-secondary/50 p-1 rounded-xl flex mb-6 relative border border-white/5">
-          {/* Sliding Background */}
-          <motion.div
-            className="absolute h-[calc(100%-8px)] top-1 bg-background rounded-lg shadow-sm border border-border/50"
-            initial={false}
-            animate={{
-              width: "50%",
-              left: role === "CLIENT" ? "4px" : "calc(50% - 4px)",
-              x: role === "CLIENT" ? 0 : 0,
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-
+        {/* 🟢 Modern Segmented Control */}
+        <div className="grid grid-cols-2 p-1 mb-6 bg-secondary/50 rounded-lg border border-border/50">
           <button
             onClick={() => setRole("CLIENT")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium z-10 transition-colors ${
-              role === "CLIENT" ? "text-foreground" : "text-muted-foreground"
+            className={`flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-all ${
+              role === "CLIENT"
+                ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <User className="w-4 h-4" /> Customer
           </button>
           <button
             onClick={() => setRole("BUSINESS")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium z-10 transition-colors ${
-              role === "BUSINESS" ? "text-foreground" : "text-muted-foreground"
+            className={`flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-all ${
+              role === "BUSINESS"
+                ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <Store className="w-4 h-4" /> Business
           </button>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-8">
-          <form onSubmit={handleRegister} className="space-y-4">
+        {/* 🟢 Card */}
+        <div className="bg-card border border-border/50 shadow-sm rounded-xl overflow-hidden">
+          <form onSubmit={handleRegister} className="p-6 md:p-8 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label
+                htmlFor="name"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                Full Name
+              </Label>
               <Input
                 id="name"
                 placeholder="John Doe"
@@ -138,33 +133,45 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
+                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
               />
             </div>
 
-            {/* Conditionally Render Business Name */}
-            {role === "BUSINESS" && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-2 overflow-hidden"
-              >
-                <Label htmlFor="businessName">Business Name</Label>
-                <Input
-                  id="businessName"
-                  placeholder="Joe's Coffee Shop"
-                  value={formData.businessName}
-                  onChange={handleChange}
-                  required={role === "BUSINESS"}
-                  disabled={isLoading}
-                  className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
-                />
-              </motion.div>
-            )}
+            {/* Conditional Business Name with Animation */}
+            <AnimatePresence initial={false}>
+              {role === "BUSINESS" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="space-y-2 overflow-hidden"
+                >
+                  <Label
+                    htmlFor="businessName"
+                    className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+                  >
+                    Business Name
+                  </Label>
+                  <Input
+                    id="businessName"
+                    placeholder="Joe's Coffee Shop"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    required={role === "BUSINESS"}
+                    disabled={isLoading}
+                    className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label
+                htmlFor="email"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -173,12 +180,17 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
+                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label
+                htmlFor="password"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -187,34 +199,30 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
+                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
               />
             </div>
 
             {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium text-center"
-              >
+              <div className="p-3 text-xs font-medium text-destructive bg-destructive/5 border border-destructive/20 rounded-md flex items-center gap-2">
+                <span className="w-1 h-1 bg-destructive rounded-full" />
                 {error}
-              </motion.div>
+              </div>
             )}
 
             <Button
               type="submit"
-              className="w-full h-10 font-semibold shadow-lg shadow-primary/20 rounded-lg"
               disabled={isLoading}
+              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-md transition-all shadow-sm flex items-center gap-2"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating
-                  Account...
+                  <Loader2 className="w-4 h-4 animate-spin" /> Processing...
                 </>
               ) : role === "BUSINESS" ? (
-                "Create Business Account"
+                <>Create Business Account</>
               ) : (
-                "Join as Customer"
+                <>Join as Customer</>
               )}
             </Button>
           </form>
@@ -224,7 +232,7 @@ export default function RegisterPage() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-medium text-primary hover:underline hover:text-primary/80 transition-colors"
+            className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
             Sign in
           </Link>

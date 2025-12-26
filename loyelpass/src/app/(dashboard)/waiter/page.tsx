@@ -15,8 +15,9 @@ import {
   Loader2,
   Receipt,
   QrCode,
-  ArrowLeftRight,
   Zap,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +41,6 @@ export default function WaiterDashboard() {
 
   useEffect(() => {
     setMounted(true);
-    // Focus input on mount
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
@@ -59,10 +59,9 @@ export default function WaiterDashboard() {
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
 
-      // Generate High-Res QR
       const qrDataUrl = await QRCode.toDataURL(data.qrData, {
         width: 600,
-        margin: 2,
+        margin: 1,
         color: {
           dark: "#000000",
           light: "#FFFFFF",
@@ -125,37 +124,35 @@ export default function WaiterDashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="max-w-md mx-auto py-4 animate-in fade-in duration-500 px-4 min-h-screen flex flex-col justify-center">
+    <div className="max-w-md mx-auto py-6 px-4 min-h-screen flex flex-col animate-in fade-in duration-500">
       {/* 🟢 Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center p-3 bg-secondary/50 rounded-2xl mb-3 shadow-inner">
-          <Zap className="w-6 h-6 text-primary fill-primary" />
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">Terminal</h1>
+          <p className="text-xs text-muted-foreground">Connected as Staff</p>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          POS Terminal
-        </h1>
-        <p className="text-muted-foreground text-sm font-medium">
-          Ready for action
-        </p>
+        <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+          <Zap className="w-4 h-4" />
+        </div>
       </div>
 
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="w-full space-y-8"
+        className="w-full flex-1 flex flex-col"
       >
-        {/* 🟢 Tabs List (Glass Segmented Control) */}
-        <TabsList className="bg-background/40 backdrop-blur-md p-1.5 rounded-full grid grid-cols-2 gap-2 w-full h-14 border border-border/50 shadow-sm relative overflow-hidden">
+        {/* 🟢 Tabs (Segmented Control) */}
+        <TabsList className="grid w-full grid-cols-2 bg-secondary/50 p-1 mb-6 rounded-lg border border-border/50">
           <TabsTrigger
             value="give-points"
-            className="rounded-full h-full text-sm font-bold data-[state=active]:bg-foreground data-[state=active]:text-background transition-all duration-300 z-10"
+            className="rounded-md text-sm font-medium transition-all"
           >
             <Receipt className="w-4 h-4 mr-2" />
             New Sale
           </TabsTrigger>
           <TabsTrigger
             value="redeem-reward"
-            className="rounded-full h-full text-sm font-bold data-[state=active]:bg-foreground data-[state=active]:text-background transition-all duration-300 z-10"
+            className="rounded-md text-sm font-medium transition-all"
           >
             <ScanLine className="w-4 h-4 mr-2" />
             Validate
@@ -163,29 +160,23 @@ export default function WaiterDashboard() {
         </TabsList>
 
         {/* 🟢 TAB 1: NEW SALE */}
-        <TabsContent value="give-points" className="mt-0 outline-none">
-          <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-white/10 overflow-hidden rounded-[2rem]">
-            <CardContent className="p-0">
+        <TabsContent value="give-points" className="flex-1 outline-none">
+          <Card className="h-[500px] border border-border/50 shadow-sm bg-card rounded-xl overflow-hidden flex flex-col">
+            <CardContent className="p-0 flex-1 flex flex-col">
               {!qrImage ? (
-                <form
-                  onSubmit={generateCode}
-                  className="flex flex-col min-h-[420px]"
-                >
-                  {/* Display Screen */}
-                  <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-b from-transparent to-black/5">
-                    <label className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em] mb-8">
-                      Total Bill Amount
+                <form onSubmit={generateCode} className="flex-1 flex flex-col">
+                  {/* Amount Display */}
+                  <div className="flex-1 flex flex-col items-center justify-center p-8 bg-secondary/10">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-4">
+                      Enter Amount
                     </label>
 
-                    <div className="flex items-center justify-center gap-1 w-full relative group">
-                      <span className="text-4xl md:text-5xl font-medium text-muted-foreground self-center mt-2 group-focus-within:text-primary transition-colors">
-                        $
-                      </span>
+                    <div className="flex items-baseline justify-center gap-1 w-full">
                       <Input
                         ref={inputRef}
                         type="number"
-                        placeholder="0.00"
-                        className="text-6xl md:text-7xl font-bold text-center border-none shadow-none focus-visible:ring-0 p-0 h-auto placeholder:text-muted/10 bg-transparent w-full max-w-[240px] text-foreground caret-primary selection:bg-primary/30"
+                        placeholder="0"
+                        className="text-6xl font-mono font-medium text-center border-none shadow-none focus-visible:ring-0 p-0 h-auto placeholder:text-muted/20 bg-transparent w-full max-w-[200px] text-foreground caret-primary"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         step="0.01"
@@ -193,78 +184,63 @@ export default function WaiterDashboard() {
                         inputMode="decimal"
                         autoComplete="off"
                       />
+                      <span className="text-xl font-medium text-muted-foreground self-end mb-2">
+                        MAD
+                      </span>
                     </div>
                   </div>
 
-                  {/* Keypad / Actions Area */}
-                  <div className="bg-muted/10 p-6 border-t border-border/30">
+                  {/* Keypad Actions */}
+                  <div className="p-6 border-t border-border/50 bg-background">
                     <Button
                       type="submit"
-                      size="lg"
-                      className="w-full h-16 text-lg font-bold rounded-2xl shadow-[0_0_20px_-5px_var(--primary)] bg-gradient-to-r from-yellow-500 to-primary text-black hover:opacity-90 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                      className="w-full h-12 text-base font-medium bg-primary hover:bg-primary/90 text-white rounded-lg transition-all"
                       disabled={loadingGen || !amount}
                     >
                       {loadingGen ? (
-                        <Loader2 className="animate-spin mr-2 h-6 w-6" />
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
                       ) : (
-                        <QrCode className="mr-2 h-6 w-6" />
+                        <QrCode className="mr-2 h-4 w-4" />
                       )}
-                      {loadingGen ? "Processing..." : "Generate Code"}
+                      Generate Code
                     </Button>
                   </div>
                 </form>
               ) : (
-                <div className="flex flex-col min-h-[420px] animate-in zoom-in duration-300">
-                  {/* Receipt Header */}
-                  <div className="bg-primary p-8 text-black text-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMwMDAiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')] opacity-20"></div>
-                    <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-black drop-shadow-sm" />
-                    <h3 className="text-2xl font-black uppercase tracking-tight">
-                      Code Ready
-                    </h3>
-                    <p className="text-black/70 font-medium text-sm">
-                      Present to customer
-                    </p>
-                  </div>
+                <div className="flex-1 flex flex-col animate-in fade-in zoom-in duration-300">
+                  {/* Digital Receipt View */}
+                  <div className="flex-1 bg-white flex flex-col items-center justify-center p-8 relative">
+                    {/* Dashed Border Top */}
+                    <div className="absolute top-0 left-0 right-0 h-px border-t border-dashed border-gray-300" />
 
-                  {/* Receipt Body */}
-                  <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 relative">
-                    {/* Jagged Edge Top */}
-                    <div
-                      className="absolute top-0 left-0 w-full h-3 bg-primary"
-                      style={{
-                        clipPath:
-                          "polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%)",
-                      }}
-                    ></div>
-
-                    <div className="p-2 bg-white rounded-lg mb-4">
+                    <div className="bg-white p-2 rounded-lg border border-gray-100 shadow-sm mb-6">
                       <img
                         src={qrImage}
                         alt="QR"
-                        className="w-56 h-56 mix-blend-multiply"
+                        className="w-48 h-48 mix-blend-multiply"
                       />
                     </div>
 
                     <div className="text-center">
-                      <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-1">
-                        Sale Value
-                      </p>
-                      <p className="text-4xl font-black tracking-tighter text-black">
-                        ${parseFloat(amount).toFixed(2)}
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 mb-2">
+                        <Receipt className="w-3 h-3" /> Sale Generated
+                      </div>
+                      <p className="text-4xl font-mono font-bold text-black tracking-tight">
+                        {parseFloat(amount).toFixed(2)}{" "}
+                        <span className="text-lg text-gray-400">MAD</span>
                       </p>
                     </div>
                   </div>
 
-                  {/* Action Footer */}
-                  <div className="p-6 bg-white border-t border-dashed border-gray-200">
+                  {/* Footer */}
+                  <div className="p-6 bg-gray-50 border-t border-gray-200">
                     <Button
                       variant="outline"
                       onClick={resetGen}
-                      className="w-full h-14 text-base font-bold rounded-xl border-2 border-gray-100 bg-gray-50 text-gray-900 hover:bg-gray-100 hover:border-gray-200"
+                      className="w-full h-12 border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:text-black font-medium"
                     >
                       <RefreshCcw className="h-4 w-4 mr-2" />
-                      Next Customer
+                      New Transaction
                     </Button>
                   </div>
                 </div>
@@ -274,14 +250,11 @@ export default function WaiterDashboard() {
         </TabsContent>
 
         {/* 🟢 TAB 2: VALIDATE REWARD */}
-        <TabsContent
-          value="redeem-reward"
-          className="mt-0 focus-visible:ring-0 outline-none"
-        >
-          <Card className="border-none shadow-2xl overflow-hidden rounded-[2rem] bg-black ring-4 ring-black/10">
-            <CardContent className="p-0">
-              <div className="relative h-[520px] w-full overflow-hidden bg-black">
-                {/* Scanner Component */}
+        <TabsContent value="redeem-reward" className="flex-1 outline-none">
+          <Card className="h-[500px] border border-border/50 shadow-sm bg-black rounded-xl overflow-hidden relative">
+            <CardContent className="p-0 h-full">
+              <div className="relative h-full w-full">
+                {/* Scanner Layer */}
                 <div className="absolute inset-0 z-0">
                   {activeTab === "redeem-reward" && (
                     <Scanner
@@ -297,89 +270,102 @@ export default function WaiterDashboard() {
                   )}
                 </div>
 
-                {/* IDLE OVERLAY */}
+                {/* HUD Overlay (Idle) */}
                 {scanStatus === "idle" && (
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
-                    {/* Viewfinder corners */}
-                    <div className="w-64 h-64 relative">
-                      <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-primary rounded-tl-3xl shadow-[0_0_10px_var(--primary)]"></div>
-                      <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-primary rounded-tr-3xl shadow-[0_0_10px_var(--primary)]"></div>
-                      <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-primary rounded-bl-3xl shadow-[0_0_10px_var(--primary)]"></div>
-                      <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-primary rounded-br-3xl shadow-[0_0_10px_var(--primary)]"></div>
+                    <div className="w-56 h-56 relative border-2 border-white/30 rounded-lg">
+                      {/* Corners */}
+                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary -mt-0.5 -ml-0.5" />
+                      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary -mt-0.5 -mr-0.5" />
+                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary -mb-0.5 -ml-0.5" />
+                      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary -mb-0.5 -mr-0.5" />
 
-                      {/* Scanning Line */}
-                      <div className="absolute top-0 left-4 right-4 h-0.5 bg-primary/80 shadow-[0_0_20px_var(--primary)] animate-scan-down"></div>
+                      {/* Scan Line */}
+                      <div className="absolute top-0 left-2 right-2 h-px bg-primary shadow-[0_0_10px_var(--primary)] animate-scan-down" />
                     </div>
-                    <p className="mt-12 text-white font-semibold bg-black/60 px-6 py-2.5 rounded-full backdrop-blur-md border border-white/10 shadow-xl">
-                      Align Ticket QR
-                    </p>
-                  </div>
-                )}
-
-                {/* PROCESSING OVERLAY */}
-                {scanStatus === "processing" && (
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-                    <div className="bg-white/5 p-8 rounded-3xl backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col items-center">
-                      <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-                      <p className="text-white font-bold text-lg tracking-wide">
-                        Verifying...
+                    <div className="mt-8 bg-black/60 backdrop-blur px-4 py-1.5 rounded-full border border-white/10">
+                      <p className="text-xs text-white/80 font-medium">
+                        Scan Customer Ticket
                       </p>
                     </div>
                   </div>
                 )}
 
-                {/* SUCCESS OVERLAY */}
-                {scanStatus === "success" && (
-                  <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-emerald-600 animate-in zoom-in duration-300 p-8 text-center">
-                    <div className="bg-white p-5 rounded-full mb-6 shadow-2xl shadow-black/20 animate-bounce">
-                      <CheckCircle2 className="h-16 w-16 text-emerald-600" />
+                {/* Result Overlay (Drawer Style) */}
+                {scanStatus !== "idle" && (
+                  <div className="absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+                    <div className="w-full bg-background border border-border rounded-xl p-6 shadow-2xl">
+                      {/* Processing */}
+                      {scanStatus === "processing" && (
+                        <div className="flex flex-col items-center py-8">
+                          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+                          <p className="font-medium text-foreground">
+                            Verifying code...
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Success */}
+                      {scanStatus === "success" && (
+                        <div className="text-center">
+                          <div className="h-12 w-12 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
+                            <Check className="h-6 w-6" />
+                          </div>
+                          <h3 className="text-lg font-bold text-foreground mb-1">
+                            Valid Reward
+                          </h3>
+
+                          <div className="bg-secondary/30 rounded-lg p-4 my-4 border border-border/50">
+                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider mb-1">
+                              Provide Item
+                            </p>
+                            <p className="text-xl font-bold text-primary mb-3">
+                              {scanResult?.rewardName}
+                            </p>
+                            <div className="h-px bg-border w-full mb-3" />
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">
+                                Client
+                              </span>
+                              <span className="font-medium">
+                                {scanResult?.clientName}
+                              </span>
+                            </div>
+                          </div>
+
+                          <Button
+                            onClick={resetScan}
+                            className="w-full bg-primary hover:bg-primary/90 text-white"
+                          >
+                            Scan Next
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Error */}
+                      {scanStatus === "error" && (
+                        <div className="text-center">
+                          <div className="h-12 w-12 bg-red-500/10 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                            <AlertCircle className="h-6 w-6" />
+                          </div>
+                          <h3 className="text-lg font-bold text-foreground mb-1">
+                            Invalid Code
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-6">
+                            {scanResult?.error ||
+                              "This code is not valid or has expired."}
+                          </p>
+
+                          <Button
+                            onClick={resetScan}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Try Again
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-4xl font-black text-white mb-2 tracking-tight">
-                      APPROVED
-                    </h3>
-
-                    <div className="bg-black/20 backdrop-blur-md p-6 rounded-2xl w-full border border-white/10 mb-8 shadow-inner">
-                      <p className="text-white/60 text-[10px] uppercase font-bold tracking-[0.2em] mb-2">
-                        Reward to Provide
-                      </p>
-                      <p className="text-2xl font-bold text-white mb-4 leading-tight">
-                        {scanResult?.rewardName}
-                      </p>
-                      <div className="h-px bg-white/20 w-full mb-3" />
-                      <div className="flex justify-between items-center text-white/90 text-sm font-medium">
-                        <span>Client</span>
-                        <span>{scanResult?.clientName}</span>
-                      </div>
-                    </div>
-
-                    <Button
-                      onClick={resetScan}
-                      className="w-full bg-white text-emerald-800 hover:bg-white/90 font-bold h-14 rounded-2xl shadow-lg"
-                    >
-                      Scan Next
-                    </Button>
-                  </div>
-                )}
-
-                {/* ERROR OVERLAY */}
-                {scanStatus === "error" && (
-                  <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-rose-600 animate-in slide-in-from-bottom-10 duration-300 p-8 text-center">
-                    <div className="bg-white p-5 rounded-full mb-6 shadow-2xl shadow-black/20">
-                      <XCircle className="h-16 w-16 text-rose-600" />
-                    </div>
-                    <h3 className="text-3xl font-black text-white mb-2 tracking-tight">
-                      DECLINED
-                    </h3>
-                    <p className="text-white/90 font-medium mb-10 text-lg max-w-[250px] mx-auto leading-relaxed">
-                      {scanResult?.error || "Invalid Code"}
-                    </p>
-
-                    <Button
-                      onClick={resetScan}
-                      className="w-full bg-white text-rose-700 hover:bg-white/90 font-bold h-14 rounded-2xl shadow-lg"
-                    >
-                      Try Again
-                    </Button>
                   </div>
                 )}
               </div>
@@ -391,7 +377,7 @@ export default function WaiterDashboard() {
       <style jsx global>{`
         @keyframes scan-down {
           0% {
-            top: 10%;
+            top: 0;
             opacity: 0;
           }
           10% {
@@ -401,7 +387,7 @@ export default function WaiterDashboard() {
             opacity: 1;
           }
           100% {
-            top: 90%;
+            top: 100%;
             opacity: 0;
           }
         }

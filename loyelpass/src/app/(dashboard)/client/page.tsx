@@ -3,11 +3,12 @@ import { PrismaClient } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import {
   QrCode,
-  Trophy,
-  Sparkles,
   Wallet,
   ArrowRight,
   Ticket,
+  ChevronRight,
+  CreditCard,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { ClientProgramCard } from "@/components/ClientProgramCard";
@@ -57,61 +58,71 @@ export default async function ClientDashboard() {
   const userName = session.user.name?.split(" ")[0] || "Member";
 
   return (
-    <div className="min-h-screen pb-24 md:pb-10 animate-in fade-in duration-700">
-      {/* 🟢 1. Header Section */}
-      <div className="flex items-end justify-between mb-8 px-1">
+    <div className="min-h-screen pb-24 md:pb-10 bg-background text-foreground animate-in fade-in duration-500">
+      {/* 🟢 1. Modern Header */}
+      <div className="flex items-center justify-between mb-8 px-1 pt-4">
         <div>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">
-            Welcome Back
-          </p>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Hi, {userName}{" "}
-            <span className="inline-block hover:animate-spin">👋</span>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Hello, {userName}
           </h1>
+          <p className="text-sm text-muted-foreground">
+            You have{" "}
+            <span className="text-primary font-mono font-medium">
+              {activeTickets.length}
+            </span>{" "}
+            active rewards.
+          </p>
         </div>
 
         <Link href="/client/rewards">
-          <div className="group relative h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/10 to-background border border-primary/20 flex items-center justify-center shadow-sm hover:shadow-primary/20 transition-all duration-300">
-            <Wallet className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
-
-            {/* Notification Dot if tickets exist */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="relative rounded-full border-border/60 bg-secondary/50 hover:bg-secondary"
+          >
+            <Wallet className="h-5 w-5 text-foreground" />
             {activeTickets.length > 0 && (
-              <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-background animate-pulse" />
+              <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
             )}
-          </div>
+          </Button>
         </Link>
       </div>
 
-      {/* 🟢 2. Hero Card (Luxury Gold Gradient) */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-yellow-300 via-primary to-yellow-600 shadow-2xl shadow-yellow-500/20 mb-12 group">
-        {/* Texture Overlay (Noise) */}
-        <div className="absolute inset-0 opacity-20 mix-blend-soft-light bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMwMDAiLz4KPC9zdmc+')]"></div>
+      {/* 🟢 2. The "Engineered" Identity Card */}
+      <div className="relative overflow-hidden rounded-2xl bg-[#0B0C0E] border border-white/10 shadow-2xl mb-12 group transition-transform active:scale-[0.98]">
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full mix-blend-screen opacity-50" />
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-900/20 blur-[60px] rounded-full opacity-50" />
 
-        {/* Abstract Glows */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/30 blur-3xl mix-blend-overlay group-hover:scale-110 transition-transform duration-1000"></div>
-        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-black/10 blur-2xl"></div>
-
-        <div className="relative p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 z-10">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 border border-black/5 text-[10px] font-bold uppercase tracking-widest text-black/70 backdrop-blur-sm">
-              <Sparkles className="w-3 h-3" /> Priority Pass
+        {/* Card Content */}
+        <div className="relative p-6 sm:p-8 flex flex-col md:flex-row justify-between gap-8 z-10">
+          <div className="flex flex-col justify-between h-full space-y-6">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded bg-white/10 flex items-center justify-center border border-white/5">
+                <CreditCard className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-xs font-mono text-white/60 uppercase tracking-widest">
+                Universal Pass
+              </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-black drop-shadow-sm">
-              Scan & Collect
-            </h2>
-            <p className="text-black/80 max-w-sm text-sm sm:text-base font-medium leading-relaxed">
-              Present your QR code to the waiter to instantly collect points or
-              redeem rewards.
-            </p>
+
+            <div>
+              <h2 className="text-3xl font-bold tracking-tighter text-white mb-1">
+                Scan ID
+              </h2>
+              <p className="text-white/50 text-sm font-medium">
+                Tap to reveal your unique QR code
+              </p>
+            </div>
           </div>
 
-          <Link href="/client/scan" className="w-full md:w-auto">
-            <Button
-              size="lg"
-              className="w-full md:w-auto min-w-[180px] h-14 rounded-full gap-3 font-bold text-lg bg-black text-white hover:bg-black/80 hover:scale-105 border border-white/10 shadow-xl transition-all duration-300"
-            >
-              <QrCode className="h-5 w-5" />
-              Open ID
+          <Link
+            href="/client/scan"
+            className="w-full md:w-auto self-center md:self-end"
+          >
+            <Button className="w-full md:w-auto h-12 rounded-lg bg-white text-black hover:bg-gray-100 font-semibold shadow-lg shadow-white/5 transition-all flex items-center justify-center gap-2">
+              <QrCode className="h-4 w-4" />
+              Open Scanner
             </Button>
           </Link>
         </div>
@@ -119,30 +130,25 @@ export default async function ClientDashboard() {
 
       {/* 🟢 3. Active Rewards (Horizontal Scroll) */}
       {activeTickets.length > 0 && (
-        <div className="mb-12 space-y-5 animate-in slide-in-from-bottom-4 duration-700 delay-150">
+        <div className="mb-10 space-y-4">
           <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-3">
-              <div className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-              </div>
-              <h3 className="text-lg font-bold tracking-tight text-foreground">
-                Ready to Redeem
-              </h3>
-            </div>
-            <Link href="/client/rewards">
-              <span className="text-xs font-bold text-primary hover:underline cursor-pointer">
-                View All
-              </span>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Ready to Redeem
+            </h3>
+            <Link
+              href="/client/rewards"
+              className="group flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80"
+            >
+              View all{" "}
+              <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
 
-          {/* Scroll Container */}
-          <div className="flex gap-5 overflow-x-auto pb-6 snap-x snap-mandatory -mx-6 px-6 sm:mx-0 sm:px-0 scrollbar-hide">
+          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
             {activeTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                className="snap-center shrink-0 w-[85vw] sm:w-[350px]"
+                className="snap-center shrink-0 w-[85vw] sm:w-[320px]"
               >
                 <ActiveTicketCard ticket={ticket} />
               </div>
@@ -151,54 +157,36 @@ export default async function ClientDashboard() {
         </div>
       )}
 
-      {/* 🟢 4. Wallets Grid */}
-      <div className="space-y-6 animate-in slide-in-from-bottom-8 duration-700 delay-300">
+      {/* 🟢 4. Memberships Grid */}
+      <div className="space-y-6">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-lg font-bold tracking-tight flex items-center gap-2 text-foreground">
+          <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
             <Ticket className="h-4 w-4 text-primary" />
-            My Memberships
+            Your Programs
           </h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs h-7 gap-1 text-muted-foreground hover:text-primary"
-          >
-            Sort by Recent <ArrowRight className="h-3 w-3" />
-          </Button>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {progressList.length === 0 ? (
-            // Improved Empty State
-            <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center border-2 border-dashed border-primary/20 rounded-[2rem] bg-secondary/20 hover:bg-secondary/40 transition-colors">
-              <div className="h-20 w-20 bg-background rounded-full flex items-center justify-center shadow-lg shadow-black/5 mb-6 ring-1 ring-border">
-                <Trophy className="h-10 w-10 text-primary/40" />
-              </div>
-              <h3 className="font-bold text-xl text-foreground mb-2">
-                No memberships yet
-              </h3>
-              <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-6">
-                You haven't visited any partners yet. Scan a code at a location
-                to start your first card!
-              </p>
-              <Link href="/client/scan">
-                <Button
-                  variant="outline"
-                  className="rounded-full border-primary/30 text-primary hover:bg-primary/10"
-                >
-                  Scan First Code
-                </Button>
-              </Link>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* New Program Button */}
+          <Link
+            href="/client/scan"
+            className="group relative flex flex-col items-center justify-center p-6 h-full min-h-[160px] rounded-xl border border-dashed border-border hover:border-primary/50 bg-secondary/20 hover:bg-secondary/40 transition-all cursor-pointer"
+          >
+            <div className="h-10 w-10 rounded-full bg-background border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <Plus className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
             </div>
-          ) : (
-            progressList.map((item) => (
-              <ClientProgramCard
-                key={item.id}
-                program={item.program}
-                progress={item}
-              />
-            ))
-          )}
+            <p className="text-sm font-medium text-muted-foreground group-hover:text-foreground">
+              Add Membership
+            </p>
+          </Link>
+
+          {progressList.map((item) => (
+            <ClientProgramCard
+              key={item.id}
+              program={item.program}
+              progress={item}
+            />
+          ))}
         </div>
       </div>
     </div>

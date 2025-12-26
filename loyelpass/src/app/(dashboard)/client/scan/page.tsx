@@ -5,14 +5,15 @@ import { Scanner } from "@yudiel/react-qr-scanner";
 import { useRouter } from "next/navigation";
 import {
   Loader2,
-  CheckCircle2,
-  XCircle,
+  Check,
   ArrowLeft,
   ScanLine,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function ScanPage() {
 
         if (res.ok) {
           setStatus("success");
-          setMessage(`+${data.pointsAdded} Points`);
+          setMessage(`+${data.pointsAdded} Points Added`);
           if (typeof navigator !== "undefined" && navigator.vibrate)
             navigator.vibrate([100, 50, 100]);
           setTimeout(() => router.push("/client"), 2000);
@@ -68,43 +69,29 @@ export default function ScanPage() {
   if (!mounted) return <div className="bg-black min-h-screen" />;
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col">
-      {/* 🟢 Top Navigation Bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/50 to-transparent">
-        {/* Back Button (Top Left) */}
+    <div className="fixed inset-0 bg-black z-50 flex flex-col font-sans">
+      {/* 🟢 Top Navigation (Minimal) */}
+      <div className="absolute top-0 left-0 right-0 z-30 p-6 flex items-center justify-between">
         <Link href="/client">
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20 rounded-full h-12 w-12 backdrop-blur-sm"
+            className="text-white/80 hover:text-white hover:bg-white/10 rounded-full backdrop-blur-sm"
           >
-            <ArrowLeft className="h-6 w-6" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-
-        {/* Title Pill */}
-        <div className="bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10 shadow-lg">
-          <span className="text-white text-sm font-semibold tracking-wide">
-            Scan QR Code
+        <div className="bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
+          <span className="text-white/90 text-xs font-mono uppercase tracking-widest">
+            Scanner Active
           </span>
         </div>
-
-        {/* Close Button (Top Right) - Alternative Exit */}
-        <Link href="/client">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20 rounded-full h-12 w-12 backdrop-blur-sm"
-          >
-            <X className="h-6 w-6" />
-          </Button>
-        </Link>
+        <div className="w-10" /> {/* Spacer */}
       </div>
 
       {/* 🟢 Main Camera Area */}
       <div className="relative flex-1 bg-black flex flex-col justify-center overflow-hidden">
-        {/* Camera Layer */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 opacity-80">
           <Scanner
             onScan={(result) => result[0] && handleScan(result[0].rawValue)}
             styles={{
@@ -115,101 +102,91 @@ export default function ScanPage() {
           />
         </div>
 
-        {/* Targeting Frame (Idle) */}
-        {status === "idle" && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-            <div className="relative w-72 h-72 border-2 border-white/30 rounded-[2rem] shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-              {/* Corners */}
-              <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-primary rounded-tl-2xl -mt-1 -ml-1"></div>
-              <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-primary rounded-tr-2xl -mt-1 -mr-1"></div>
-              <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-primary rounded-bl-2xl -mb-1 -ml-1"></div>
-              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-primary rounded-br-2xl -mb-1 -mr-1"></div>
+        {/* 🟢 HUD Overlay (Engineered Frame) */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="relative w-64 h-64">
+            {/* Corners */}
+            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white rounded-tl-lg" />
+            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white rounded-tr-lg" />
+            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-white rounded-bl-lg" />
+            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white rounded-br-lg" />
 
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_20px_rgba(var(--primary),1)] animate-scan-down opacity-80"></div>
-              <ScanLine className="absolute inset-0 m-auto text-white/20 h-24 w-24 animate-pulse" />
+            {/* Scan Line */}
+            {status === "idle" && (
+              <motion.div
+                initial={{ top: 0, opacity: 0 }}
+                animate={{ top: "100%", opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="absolute left-2 right-2 h-[2px] bg-primary shadow-[0_0_15px_var(--color-primary)]"
+              />
+            )}
+
+            <div className="absolute inset-0 flex items-center justify-center">
+              <ScanLine className="text-white/10 w-32 h-32" strokeWidth={1} />
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Processing State */}
-        {status === "processing" && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in">
-            <div className="bg-white/10 p-6 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col items-center">
-              <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-              <p className="text-white font-bold text-lg tracking-wide">
-                Verifying...
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Success State */}
-        {status === "success" && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-green-500/90 backdrop-blur-md animate-in zoom-in">
-            <div className="bg-white p-6 rounded-full mb-6 shadow-xl animate-bounce">
-              <CheckCircle2 className="h-16 w-16 text-green-600" />
-            </div>
-            <h2 className="text-4xl font-black text-white mb-2">AWESOME!</h2>
-            <p className="text-white font-bold text-xl">{message}</p>
-          </div>
-        )}
-
-        {/* Error State */}
-        {status === "error" && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-red-600/90 backdrop-blur-md animate-in slide-in-from-bottom-10">
-            <XCircle className="h-20 w-20 text-white mb-4 drop-shadow-lg" />
-            <h2 className="text-3xl font-bold text-white mb-2">Oops!</h2>
-            <p className="text-white/90 text-center px-8 mb-8 font-medium">
-              {message}
-            </p>
-            <Button
-              onClick={resetScan}
-              className="bg-white text-red-600 hover:bg-gray-100 font-bold rounded-full px-10 py-6 text-lg"
+        {/* 🟢 Result Drawer (Modern Notification) */}
+        <AnimatePresence>
+          {status !== "idle" && (
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              className="absolute bottom-0 left-0 right-0 z-40 p-6 bg-gradient-to-t from-black via-black/90 to-transparent"
             >
-              Try Again
+              <div className="bg-zinc-900 border border-white/10 p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm mx-auto">
+                {status === "processing" && (
+                  <>
+                    <Loader2 className="h-8 w-8 text-primary animate-spin mb-4" />
+                    <p className="text-white font-medium">Verifying code...</p>
+                  </>
+                )}
+
+                {status === "success" && (
+                  <>
+                    <div className="h-10 w-10 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mb-4 border border-green-500/20">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-1">
+                      Success!
+                    </h3>
+                    <p className="text-zinc-400 text-sm">{message}</p>
+                  </>
+                )}
+
+                {status === "error" && (
+                  <>
+                    <div className="h-10 w-10 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+                      <AlertCircle className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-1">Error</h3>
+                    <p className="text-zinc-400 text-sm mb-4">{message}</p>
+                    <Button
+                      onClick={resetScan}
+                      className="w-full bg-white text-black hover:bg-gray-200"
+                    >
+                      Try Again
+                    </Button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 🟢 Bottom Footer */}
+      {status === "idle" && (
+        <div className="p-8 pb-12 bg-black z-30 flex justify-center">
+          <Link href="/client">
+            <Button variant="ghost" className="text-white/50 hover:text-white">
+              Cancel
             </Button>
-          </div>
-        )}
-      </div>
-
-      {/* 🟢 Bottom Controls */}
-      <div className="p-8 pb-12 bg-black flex flex-col items-center gap-6 z-30">
-        <p className="text-white/60 text-sm font-medium">
-          Align QR code within the frame
-        </p>
-
-        {/* BIG CANCEL BUTTON */}
-        <Link href="/client" className="w-full max-w-xs">
-          <Button
-            variant="outline"
-            className="w-full rounded-full border-white/20 text-white hover:bg-white/10 hover:text-white h-14 text-lg font-medium transition-all active:scale-95"
-          >
-            Cancel Scan
-          </Button>
-        </Link>
-      </div>
-
-      <style jsx global>{`
-        @keyframes scan-down {
-          0% {
-            top: 0;
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            top: 100%;
-            opacity: 0;
-          }
-        }
-        .animate-scan-down {
-          animation: scan-down 2s linear infinite;
-        }
-      `}</style>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

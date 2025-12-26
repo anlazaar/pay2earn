@@ -7,7 +7,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft, QrCode } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loader2, ArrowLeft, Layers, Command } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
@@ -33,15 +34,8 @@ export default function LoginPage() {
         setError("Invalid email or password.");
         setIsLoading(false);
       } else {
-        // 🟢 FIX START
-        // 1. Force a router refresh to update server components
         router.refresh();
-
-        // 2. Use window.location.href instead of router.push
-        // This forces a hard navigation, ensuring the new Session Cookie
-        // is sent to the server and breaking any client-side cache loops.
-        window.location.href = "/dashboard-router";
-        // 🟢 FIX END
+        window.location.href = "/dashboard"; // Adjust based on role if needed
       }
     } catch (error) {
       setError("Something went wrong. Please try again.");
@@ -50,66 +44,75 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background text-foreground">
-      {/* 🟢 Animated Background */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-50" />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-
-      {/* 🟢 Back Button */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="absolute top-8 left-8 z-20"
-      >
-        <Link href="/">
-          <Button
-            variant="ghost"
-            className="gap-2 pl-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Button>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center relative bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+      {/* 🟢 Navigation / Utilities */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          href="/"
+          className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back</span>
         </Link>
-      </motion.div>
+      </div>
 
+      <div className="absolute top-6 right-6 z-20">
+        <ThemeToggle />
+      </div>
+
+      {/* 🟢 Main Content Wrapper */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-sm z-10 p-6"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-[400px] px-6"
       >
-        {/* Branding */}
-        <div className="flex flex-col items-center gap-2 mb-8 text-center">
-          <div className="h-12 w-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30">
-            <QrCode className="text-primary-foreground h-6 w-6" />
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto w-10 h-10 mb-6 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center text-primary">
+            <Layers className="w-5 h-5" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mt-2">LoyalPass</h1>
-          <p className="text-sm text-muted-foreground">
-            Welcome back. Please sign in.
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Log in to Loylpass
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Enter your credentials to access the workspace.
           </p>
         </div>
 
-        {/* Glass Card */}
-        <div className="rounded-[2rem] border border-white/10 bg-background/40 backdrop-blur-xl shadow-2xl p-8">
-          <form onSubmit={handleLogin} className="space-y-4">
+        {/* 🟢 The "Engineered" Card */}
+        <div className="bg-card border border-border/50 shadow-sm rounded-xl overflow-hidden">
+          <form onSubmit={handleLogin} className="p-6 md:p-8 space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label
+                htmlFor="email"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
+                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                placeholder="name@company.com"
               />
             </div>
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label
+                  htmlFor="password"
+                  className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  Password
+                </Label>
                 <Link
                   href="#"
-                  className="text-xs text-primary hover:underline font-medium"
+                  className="text-xs text-primary hover:text-primary/80 transition-colors"
                 >
                   Forgot password?
                 </Link>
@@ -117,47 +120,45 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
-                className="bg-background/50 border-white/10 focus:border-primary/50 transition-colors"
+                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
               />
             </div>
 
             {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium text-center"
-              >
+              <div className="p-3 text-xs font-medium text-destructive bg-destructive/5 border border-destructive/20 rounded-md flex items-center gap-2">
+                <span className="w-1 h-1 bg-destructive rounded-full" />
                 {error}
-              </motion.div>
+              </div>
             )}
 
             <Button
               type="submit"
-              className="w-full h-10 font-semibold shadow-lg shadow-primary/20 rounded-lg"
               disabled={isLoading}
+              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-md transition-all shadow-sm"
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing
-                  In...
-                </>
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 "Sign In"
               )}
             </Button>
           </form>
+        </div>
 
-          {/* Demo Helper */}
-          <div className="mt-6 p-4 rounded-xl bg-secondary/50 border border-white/5 text-xs text-muted-foreground space-y-2">
-            <p className="font-semibold text-foreground">Demo Access:</p>
-            <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg border border-white/5">
-              <span>owner@loyvo.com</span>
-              <span className="font-mono opacity-70">password123</span>
+        {/* 🟢 Developer / Demo Note (Monospace) */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex flex-col items-center gap-2 px-4 py-3 rounded border border-border border-dashed bg-secondary/20">
+            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+              <Command className="w-3 h-3" /> Demo Credentials
+            </span>
+            <div className="flex items-center gap-4 text-xs font-mono text-foreground/80">
+              <span>user: owner@loyvo.com</span>
+              <span className="w-px h-3 bg-border" />
+              <span>pass: password123</span>
             </div>
           </div>
         </div>
@@ -166,7 +167,7 @@ export default function LoginPage() {
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="font-medium text-primary hover:underline hover:text-primary/80 transition-colors"
+            className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
             Create one free
           </Link>
