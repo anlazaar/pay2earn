@@ -35,10 +35,36 @@ export default async function DashboardLayout({
   ];
 
   const businessNavItems: NavItem[] = [
-    { name: "Overview", href: "/business", iconKey: "LayoutDashboard" },
-    { name: "Programs", href: "/business/programs", iconKey: "CreditCard" },
-    { name: "Staff / Waiters", href: "/business/waiters", iconKey: "Users" },
-    { name: "Settings", href: "/business/settings", iconKey: "Settings" },
+    {
+      name: "Overview",
+      href: "/business",
+      iconKey: "LayoutDashboard",
+    },
+    {
+      name: "Transactions",
+      href: "/business/transactions",
+      iconKey: "History", // Matches the icon used in the Transactions page
+    },
+    {
+      name: "Programs",
+      href: "/business/programs",
+      iconKey: "CreditCard",
+    },
+    {
+      name: "Menu & Products",
+      href: "/business/products",
+      iconKey: "Package", // Matches the icon used in the Products page
+    },
+    {
+      name: "Staff / Waiters",
+      href: "/business/waiters",
+      iconKey: "Users",
+    },
+    // {
+    //   name: "Settings",
+    //   href: "/business/settings",
+    //   iconKey: "Settings",
+    // },
   ];
 
   const waiterNavItems: NavItem[] = [

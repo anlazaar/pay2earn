@@ -24,6 +24,7 @@ import {
   X,
   Layers,
   ChevronRight,
+  Package,
 } from "lucide-react";
 
 // 1. Map String Keys to Actual Icons
@@ -40,6 +41,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   ShieldCheck,
   Building2,
   BarChart3,
+  Package,
 };
 
 export interface NavItem {

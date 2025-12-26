@@ -64,6 +64,7 @@ model Business {
   products           Product[]
   purchases          Purchase[]
 
+  pointsMultiplier Float    @default(1.0)
   redemptions        RedemptionTicket[]
 }
 

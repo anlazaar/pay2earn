@@ -43,7 +43,8 @@ const CustomTooltip = ({
 
 export function OverviewChart({ data, className }: Props) {
   return (
-    <div className={cn("w-full h-[300px] relative", className)}>
+    // 🟢 FIX: Add 'min-w-0' to prevent grid collapse issues
+    <div className={cn("w-full h-[300px] min-w-0", className)}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
@@ -51,7 +52,6 @@ export function OverviewChart({ data, className }: Props) {
         >
           <defs>
             <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
-              {/* 🟢 FIX: Use var(--primary) directly, no hsl() wrapper */}
               <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
               <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
             </linearGradient>
@@ -71,7 +71,6 @@ export function OverviewChart({ data, className }: Props) {
             tickMargin={10}
             minTickGap={30}
             style={{ fontSize: 10, fontWeight: 500 }}
-            // 🟢 FIX: Use var(--muted-foreground) directly
             tick={{ fill: "var(--muted-foreground)" }}
           />
 
@@ -80,7 +79,6 @@ export function OverviewChart({ data, className }: Props) {
             tickLine={false}
             tickFormatter={(value) => `${value}`}
             style={{ fontSize: 10, fontFamily: "monospace" }}
-            // 🟢 FIX: Use var(--muted-foreground) directly
             tick={{ fill: "var(--muted-foreground)" }}
           />
 

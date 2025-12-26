@@ -1,39 +1,60 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import QRCode from "qrcode";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   RefreshCcw,
   ScanLine,
   CheckCircle2,
-  XCircle,
-  Loader2,
   Receipt,
   QrCode,
   Zap,
   Check,
   AlertCircle,
+  Package,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Types
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  points: number | null;
+}
+
+interface CartItem extends Product {
+  qty: number;
+}
+
 export default function WaiterDashboard() {
   const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState("new-sale");
 
-  // --- STATE ---
-  const [activeTab, setActiveTab] = useState("give-points");
+  // --- DATA STATE ---
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
-  // Tab 1: New Sale
-  const [amount, setAmount] = useState("");
+  // --- CART STATE ---
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [customAmount, setCustomAmount] = useState("");
+
+  // --- GENERATION STATE ---
   const [qrImage, setQrImage] = useState<string | null>(null);
   const [loadingGen, setLoadingGen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Tab 2: Scan Reward
+  // --- SCANNER STATE ---
   const [scanStatus, setScanStatus] = useState<
     "idle" | "processing" | "success" | "error"
   >("idle");
@@ -41,31 +62,93 @@ export default function WaiterDashboard() {
 
   useEffect(() => {
     setMounted(true);
-    setTimeout(() => inputRef.current?.focus(), 100);
+    fetchProducts();
   }, []);
 
-  // --- LOGIC: GENERATE ---
-  const generateCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!amount) return;
+  // 1. Fetch Products on Load
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/waiters/products");
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error("Failed to load products");
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  // 2. Cart Logic
+  const addToCart = (product: Product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+        );
+      }
+      return [...prev, { ...product, qty: 1 }];
+    });
+    // Clear custom amount if adding real products to avoid confusion
+    if (customAmount) setCustomAmount("");
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart((prev) =>
+      prev
+        .map((item) =>
+          item.id === productId ? { ...item, qty: item.qty - 1 } : item
+        )
+        .filter((item) => item.qty > 0)
+    );
+  };
+
+  const cartTotal = useMemo(() => {
+    const productTotal = cart.reduce(
+      (acc, item) => acc + Number(item.price) * item.qty,
+      0
+    );
+    // Add custom amount if entered
+    const custom = customAmount ? parseFloat(customAmount) : 0;
+    return productTotal + custom;
+  }, [cart, customAmount]);
+
+  // 3. Generate QR
+  const generateCode = async () => {
+    if (cartTotal <= 0) return;
     setLoadingGen(true);
     setQrImage(null);
+
+    // Prepare payload
+    const payload = {
+      amount: cartTotal,
+      // If we have cart items, send them. If it's custom amount, send a dummy product description
+      products:
+        cart.length > 0
+          ? cart.map((i) => ({
+              id: i.id,
+              name: i.name,
+              qty: i.qty,
+              price: i.price,
+            }))
+          : [{ name: "Custom Amount", price: cartTotal, qty: 1 }],
+    };
 
     try {
       const res = await fetch("/api/purchases/generate", {
         method: "POST",
-        body: JSON.stringify({ amount: parseFloat(amount), products: [] }),
+        body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
 
       const qrDataUrl = await QRCode.toDataURL(data.qrData, {
         width: 600,
         margin: 1,
-        color: {
-          dark: "#000000",
-          light: "#FFFFFF",
-        },
+        color: { dark: "#000000", light: "#FFFFFF" },
       });
       setQrImage(qrDataUrl);
     } catch (err) {
@@ -76,28 +159,24 @@ export default function WaiterDashboard() {
   };
 
   const resetGen = () => {
-    setAmount("");
+    setCart([]);
+    setCustomAmount("");
     setQrImage(null);
-    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  // --- LOGIC: SCAN ---
+  // 4. Scanner Logic (Unchanged)
   const handleScanTicket = async (text: string) => {
     if (scanStatus !== "idle") return;
-
     if (text) {
       if (typeof navigator !== "undefined" && navigator.vibrate)
         navigator.vibrate(50);
       setScanStatus("processing");
-
       try {
         const res = await fetch("/api/waiters/validate-reward", {
           method: "POST",
           body: JSON.stringify({ qrData: text }),
         });
-
         const data = await res.json();
-
         if (res.ok) {
           setScanStatus("success");
           setScanResult(data);
@@ -124,12 +203,12 @@ export default function WaiterDashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="max-w-md mx-auto py-6 px-4 min-h-screen flex flex-col animate-in fade-in duration-500">
-      {/* 🟢 Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-md mx-auto h-screen flex flex-col bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-border/50 bg-card">
         <div>
-          <h1 className="text-xl font-bold tracking-tight">Terminal</h1>
-          <p className="text-xs text-muted-foreground">Connected as Staff</p>
+          <h1 className="text-lg font-bold tracking-tight">Staff Terminal</h1>
+          <p className="text-xs text-muted-foreground">Logged in as Waiter</p>
         </div>
         <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
           <Zap className="w-4 h-4" />
@@ -139,262 +218,273 @@ export default function WaiterDashboard() {
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="w-full flex-1 flex flex-col"
+        className="flex-1 flex flex-col overflow-hidden"
       >
-        {/* 🟢 Tabs (Segmented Control) */}
-        <TabsList className="grid w-full grid-cols-2 bg-secondary/50 p-1 mb-6 rounded-lg border border-border/50">
-          <TabsTrigger
-            value="give-points"
-            className="rounded-md text-sm font-medium transition-all"
-          >
-            <Receipt className="w-4 h-4 mr-2" />
-            New Sale
-          </TabsTrigger>
-          <TabsTrigger
-            value="redeem-reward"
-            className="rounded-md text-sm font-medium transition-all"
-          >
-            <ScanLine className="w-4 h-4 mr-2" />
-            Validate
-          </TabsTrigger>
-        </TabsList>
+        <div className="px-4 pt-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="new-sale">New Sale</TabsTrigger>
+            <TabsTrigger value="scan">Validate Reward</TabsTrigger>
+          </TabsList>
+        </div>
 
-        {/* 🟢 TAB 1: NEW SALE */}
-        <TabsContent value="give-points" className="flex-1 outline-none">
-          <Card className="h-[500px] border border-border/50 shadow-sm bg-card rounded-xl overflow-hidden flex flex-col">
-            <CardContent className="p-0 flex-1 flex flex-col">
-              {!qrImage ? (
-                <form onSubmit={generateCode} className="flex-1 flex flex-col">
-                  {/* Amount Display */}
-                  <div className="flex-1 flex flex-col items-center justify-center p-8 bg-secondary/10">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-4">
-                      Enter Amount
+        {/* 🟢 TAB 1: PRODUCT POS */}
+        <TabsContent
+          value="new-sale"
+          className="flex-1 flex flex-col overflow-hidden mt-2"
+        >
+          {!qrImage ? (
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Product Grid (Scrollable) */}
+              <ScrollArea className="flex-1 px-4">
+                <div className="pb-32">
+                  {" "}
+                  {/* Padding for bottom fixed cart */}
+                  {/* Custom Amount Input */}
+                  <div className="mb-6 bg-secondary/20 p-4 rounded-xl border border-border/50">
+                    <label className="text-xs font-semibold uppercase text-muted-foreground mb-2 block">
+                      Custom Amount
                     </label>
-
-                    <div className="flex items-baseline justify-center gap-1 w-full">
-                      <Input
-                        ref={inputRef}
-                        type="number"
-                        placeholder="0"
-                        className="text-6xl font-mono font-medium text-center border-none shadow-none focus-visible:ring-0 p-0 h-auto placeholder:text-muted/20 bg-transparent w-full max-w-[200px] text-foreground caret-primary"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        step="0.01"
-                        min="0.01"
-                        inputMode="decimal"
-                        autoComplete="off"
-                      />
-                      <span className="text-xl font-medium text-muted-foreground self-end mb-2">
-                        MAD
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-mono text-muted-foreground">
+                        $
                       </span>
-                    </div>
-                  </div>
-
-                  {/* Keypad Actions */}
-                  <div className="p-6 border-t border-border/50 bg-background">
-                    <Button
-                      type="submit"
-                      className="w-full h-12 text-base font-medium bg-primary hover:bg-primary/90 text-white rounded-lg transition-all"
-                      disabled={loadingGen || !amount}
-                    >
-                      {loadingGen ? (
-                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                      ) : (
-                        <QrCode className="mr-2 h-4 w-4" />
-                      )}
-                      Generate Code
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <div className="flex-1 flex flex-col animate-in fade-in zoom-in duration-300">
-                  {/* Digital Receipt View */}
-                  <div className="flex-1 bg-white flex flex-col items-center justify-center p-8 relative">
-                    {/* Dashed Border Top */}
-                    <div className="absolute top-0 left-0 right-0 h-px border-t border-dashed border-gray-300" />
-
-                    <div className="bg-white p-2 rounded-lg border border-gray-100 shadow-sm mb-6">
-                      <img
-                        src={qrImage}
-                        alt="QR"
-                        className="w-48 h-48 mix-blend-multiply"
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        value={customAmount}
+                        onChange={(e) => {
+                          setCustomAmount(e.target.value);
+                          if (e.target.value) setCart([]); // Reset cart if typing custom
+                        }}
+                        className="text-lg font-medium bg-background border-border"
                       />
                     </div>
-
-                    <div className="text-center">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 mb-2">
-                        <Receipt className="w-3 h-3" /> Sale Generated
-                      </div>
-                      <p className="text-4xl font-mono font-bold text-black tracking-tight">
-                        {parseFloat(amount).toFixed(2)}{" "}
-                        <span className="text-lg text-gray-400">MAD</span>
-                      </p>
+                  </div>
+                  {/* Menu Grid */}
+                  <label className="text-xs font-semibold uppercase text-muted-foreground mb-3 block">
+                    Menu Items
+                  </label>
+                  {loadingProducts ? (
+                    <div className="flex justify-center py-10">
+                      <RefreshCcw className="animate-spin text-muted-foreground" />
                     </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="p-6 bg-gray-50 border-t border-gray-200">
-                    <Button
-                      variant="outline"
-                      onClick={resetGen}
-                      className="w-full h-12 border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:text-black font-medium"
-                    >
-                      <RefreshCcw className="h-4 w-4 mr-2" />
-                      New Transaction
-                    </Button>
-                  </div>
+                  ) : products.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      No products found.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {products.map((product) => {
+                        const inCart = cart.find((c) => c.id === product.id);
+                        return (
+                          <button
+                            key={product.id}
+                            onClick={() => addToCart(product)}
+                            className={cn(
+                              "relative flex flex-col items-start p-3 rounded-xl border transition-all text-left",
+                              inCart
+                                ? "bg-primary/5 border-primary/50 ring-1 ring-primary/20"
+                                : "bg-card border-border hover:border-primary/30"
+                            )}
+                          >
+                            <span className="font-semibold text-sm line-clamp-1 w-full">
+                              {product.name}
+                            </span>
+                            <span className="text-xs text-muted-foreground mt-1">
+                              ${Number(product.price).toFixed(2)}
+                            </span>
+                            {inCart && (
+                              <Badge className="absolute top-2 right-2 h-5 w-5 p-0 flex items-center justify-center rounded-full bg-primary text-[10px]">
+                                {inCart.qty}
+                              </Badge>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </ScrollArea>
 
-        {/* 🟢 TAB 2: VALIDATE REWARD */}
-        <TabsContent value="redeem-reward" className="flex-1 outline-none">
-          <Card className="h-[500px] border border-border/50 shadow-sm bg-black rounded-xl overflow-hidden relative">
-            <CardContent className="p-0 h-full">
-              <div className="relative h-full w-full">
-                {/* Scanner Layer */}
-                <div className="absolute inset-0 z-0">
-                  {activeTab === "redeem-reward" && (
-                    <Scanner
-                      onScan={(res) =>
-                        res[0] && handleScanTicket(res[0].rawValue)
-                      }
-                      styles={{
-                        container: { height: "100%", width: "100%" },
-                        video: { objectFit: "cover", height: "100%" },
-                      }}
-                      components={{ audio: false, torch: true }}
-                    />
+              {/* Bottom Cart Summary (Fixed) */}
+              <div className="border-t border-border bg-card p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-10">
+                {cart.length > 0 && (
+                  <div className="flex gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
+                    {cart.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 bg-secondary rounded-lg px-2 py-1 shrink-0 border border-border"
+                      >
+                        <span className="text-xs font-medium">{item.name}</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="h-5 w-5 flex items-center justify-center rounded-full bg-background hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-xs font-mono w-3 text-center">
+                            {item.qty}
+                          </span>
+                          <button
+                            onClick={() => addToCart(item)}
+                            className="h-5 w-5 flex items-center justify-center rounded-full bg-background hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      Total Amount
+                    </p>
+                    <p className="text-2xl font-bold font-mono tracking-tight text-foreground">
+                      ${cartTotal.toFixed(2)}
+                    </p>
+                  </div>
+                  {cart.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setCart([])}
+                      className="h-8 w-8 text-muted-foreground"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   )}
                 </div>
 
-                {/* HUD Overlay (Idle) */}
-                {scanStatus === "idle" && (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
-                    <div className="w-56 h-56 relative border-2 border-white/30 rounded-lg">
-                      {/* Corners */}
-                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary -mt-0.5 -ml-0.5" />
-                      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary -mt-0.5 -mr-0.5" />
-                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary -mb-0.5 -ml-0.5" />
-                      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary -mb-0.5 -mr-0.5" />
+                <Button
+                  onClick={generateCode}
+                  disabled={cartTotal <= 0 || loadingGen}
+                  className="w-full h-12 text-base font-medium shadow-lg shadow-primary/20"
+                >
+                  {loadingGen ? (
+                    <RefreshCcw className="animate-spin mr-2 h-4 w-4" />
+                  ) : (
+                    <QrCode className="mr-2 h-4 w-4" />
+                  )}
+                  Generate QR Code
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // QR DISPLAY MODE (Similar to previous code)
+            <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white animate-in zoom-in-95 duration-200">
+              <div className="w-full max-w-xs bg-white rounded-3xl p-6 shadow-2xl border border-gray-100 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
-                      {/* Scan Line */}
-                      <div className="absolute top-0 left-2 right-2 h-px bg-primary shadow-[0_0_10px_var(--primary)] animate-scan-down" />
+                <div className="mb-6">
+                  <p className="text-gray-400 text-xs uppercase tracking-wider font-semibold">
+                    Scan to Collect
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 mt-1">
+                    ${cartTotal.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+                  <img
+                    src={qrImage}
+                    alt="QR Code"
+                    className="w-full h-auto mix-blend-multiply"
+                  />
+                </div>
+
+                <div className="space-y-2 text-left">
+                  <p className="text-xs text-gray-400 font-medium uppercase border-b border-gray-100 pb-2 mb-2">
+                    Receipt Details
+                  </p>
+                  {cart.length > 0 ? (
+                    cart.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex justify-between text-xs text-gray-600"
+                      >
+                        <span>
+                          {item.qty}x {item.name}
+                        </span>
+                        <span>
+                          ${(Number(item.price) * item.qty).toFixed(2)}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>Custom Amount</span>
+                      <span>${cartTotal.toFixed(2)}</span>
                     </div>
-                    <div className="mt-8 bg-black/60 backdrop-blur px-4 py-1.5 rounded-full border border-white/10">
-                      <p className="text-xs text-white/80 font-medium">
-                        Scan Customer Ticket
-                      </p>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
+              </div>
 
-                {/* Result Overlay (Drawer Style) */}
-                {scanStatus !== "idle" && (
-                  <div className="absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
-                    <div className="w-full bg-background border border-border rounded-xl p-6 shadow-2xl">
-                      {/* Processing */}
-                      {scanStatus === "processing" && (
-                        <div className="flex flex-col items-center py-8">
-                          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-                          <p className="font-medium text-foreground">
-                            Verifying code...
-                          </p>
-                        </div>
-                      )}
+              <Button
+                variant="outline"
+                onClick={resetGen}
+                className="mt-8 min-w-[200px] border-gray-200 bg-transparent text-gray-900 hover:bg-gray-50"
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" /> New Sale
+              </Button>
+            </div>
+          )}
+        </TabsContent>
 
-                      {/* Success */}
-                      {scanStatus === "success" && (
-                        <div className="text-center">
-                          <div className="h-12 w-12 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
-                            <Check className="h-6 w-6" />
-                          </div>
-                          <h3 className="text-lg font-bold text-foreground mb-1">
-                            Valid Reward
-                          </h3>
-
-                          <div className="bg-secondary/30 rounded-lg p-4 my-4 border border-border/50">
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider mb-1">
-                              Provide Item
-                            </p>
-                            <p className="text-xl font-bold text-primary mb-3">
-                              {scanResult?.rewardName}
-                            </p>
-                            <div className="h-px bg-border w-full mb-3" />
-                            <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">
-                                Client
-                              </span>
-                              <span className="font-medium">
-                                {scanResult?.clientName}
-                              </span>
-                            </div>
-                          </div>
-
-                          <Button
-                            onClick={resetScan}
-                            className="w-full bg-primary hover:bg-primary/90 text-white"
-                          >
-                            Scan Next
-                          </Button>
-                        </div>
-                      )}
-
-                      {/* Error */}
-                      {scanStatus === "error" && (
-                        <div className="text-center">
-                          <div className="h-12 w-12 bg-red-500/10 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
-                            <AlertCircle className="h-6 w-6" />
-                          </div>
-                          <h3 className="text-lg font-bold text-foreground mb-1">
-                            Invalid Code
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-6">
-                            {scanResult?.error ||
-                              "This code is not valid or has expired."}
-                          </p>
-
-                          <Button
-                            onClick={resetScan}
-                            variant="outline"
-                            className="w-full"
-                          >
-                            Try Again
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+        {/* 🟢 TAB 2: SCANNER (Unchanged logic, just keeping structure) */}
+        <TabsContent value="scan" className="flex-1 mt-0 bg-black relative">
+          <div className="absolute inset-0">
+            {activeTab === "scan" && (
+              <Scanner
+                onScan={(res) => res[0] && handleScanTicket(res[0].rawValue)}
+                styles={{ container: { height: "100%" } }}
+                components={{ audio: false, torch: true }}
+              />
+            )}
+          </div>
+          {/* Overlay UI for Scanner Results... (Reuse previous scanner UI code here) */}
+          {scanStatus !== "idle" && (
+            <div className="absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
+              <div className="bg-background w-full p-6 rounded-xl text-center">
+                {scanStatus === "success" ? (
+                  <>
+                    <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
+                    <h3 className="font-bold text-lg mb-1">
+                      {scanResult?.rewardName}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Client: {scanResult?.clientName}
+                    </p>
+                    <Button onClick={resetScan} className="w-full">
+                      Next
+                    </Button>
+                  </>
+                ) : scanStatus === "error" ? (
+                  <>
+                    <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                    <h3 className="font-bold text-lg mb-1">Invalid Ticket</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {scanResult?.error || "Error"}
+                    </p>
+                    <Button
+                      onClick={resetScan}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Try Again
+                    </Button>
+                  </>
+                ) : (
+                  <RefreshCcw className="h-8 w-8 animate-spin mx-auto text-primary" />
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
-
-      <style jsx global>{`
-        @keyframes scan-down {
-          0% {
-            top: 0;
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            top: 100%;
-            opacity: 0;
-          }
-        }
-        .animate-scan-down {
-          animation: scan-down 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-      `}</style>
     </div>
   );
 }
