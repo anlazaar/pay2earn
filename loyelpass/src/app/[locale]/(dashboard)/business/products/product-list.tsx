@@ -4,37 +4,38 @@ import { Product } from "@prisma/client";
 import { Package, Coins, Trash2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteProduct } from "./actions";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
+
+// 1. Define a "Safe" type that replaces Decimal with number
+type SerializedProduct = Omit<Product, "price"> & {
+  price: number;
+};
 
 interface ProductListProps {
-  initialProducts: Product[];
+  initialProducts: SerializedProduct[];
 }
 
 export function ProductList({ initialProducts }: ProductListProps) {
-  const { toast } = useToast();
+  const t = useTranslations("ProductsPage");
+  const format = useFormatter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // We rely on the server to revalidate, but we can optimistically update UI
-  // or just wait for the server action to finish (which refreshes the page).
-
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    if (!confirm(t("toasts.confirm_delete"))) return;
 
     setDeletingId(id);
     const res = await deleteProduct(id);
     setDeletingId(null);
 
     if (res.error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
+      toast.error(t("toasts.error_title"), {
         description: "Could not delete product.",
       });
     } else {
-      toast({
-        title: "Deleted",
-        description: "Product removed successfully.",
+      toast.success(t("toasts.success_title"), {
+        description: t("toasts.deleted_desc"),
       });
     }
   };
@@ -43,10 +44,9 @@ export function ProductList({ initialProducts }: ProductListProps) {
     return (
       <div className="col-span-full flex flex-col items-center justify-center py-20 border border-dashed border-border rounded-xl bg-secondary/10">
         <Package className="h-10 w-10 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium">No products yet</h3>
+        <h3 className="text-lg font-medium">{t("empty.title")}</h3>
         <p className="text-sm text-muted-foreground text-center max-w-sm mt-1">
-          Add your best sellers here to automatically calculate points when
-          waiters checkout.
+          {t("empty.desc")}
         </p>
       </div>
     );
@@ -66,7 +66,11 @@ export function ProductList({ initialProducts }: ProductListProps) {
               </div>
               <div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md">
                 <span className="text-xs font-mono font-medium">
-                  ${Number(product.price).toFixed(2)}
+                  {/* Currency Formatter (MAD) */}
+                  {format.number(product.price, {
+                    style: "currency",
+                    currency: "MAD",
+                  })}
                 </span>
               </div>
             </div>
@@ -75,7 +79,7 @@ export function ProductList({ initialProducts }: ProductListProps) {
 
             <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
               <Tag className="h-3.5 w-3.5" />
-              <span>Standard Item</span>
+              <span>{t("standard_item")}</span>
             </div>
           </div>
 
@@ -87,19 +91,24 @@ export function ProductList({ initialProducts }: ProductListProps) {
               </span>
             </div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-              disabled={deletingId === product.id}
-              onClick={() => handleDelete(product.id)}
-            >
-              {deletingId === product.id ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-            </Button>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider hidden sm:inline-block">
+                {t("reward_value")}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                disabled={deletingId === product.id}
+                onClick={() => handleDelete(product.id)}
+              >
+                {deletingId === product.id ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       ))}

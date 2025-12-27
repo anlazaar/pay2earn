@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
 import { Zap, Loader2 } from "lucide-react";
 import { toggleBoost } from "@/app/actions/business";
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function BoostToggle({ initialMultiplier }: Props) {
+  const t = useTranslations("BoostToggle");
+
   // If multiplier is > 1.0, it means boost is ON
   const [isBoosted, setIsBoosted] = useState(initialMultiplier > 1.0);
   const [loading, setLoading] = useState(false);
@@ -29,21 +32,20 @@ export function BoostToggle({ initialMultiplier }: Props) {
     if (result.error) {
       // Revert if failed
       setIsBoosted(!checked);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update boost settings.",
+      toast.error(t("toast.error_title"), {
+        description: t("toast.error_desc"),
       });
     } else {
-      toast({
-        title: checked ? "🚀 Boost Activated!" : "Boost Deactivated",
-        description: checked
-          ? "Customers will now earn 2x points."
-          : "Points returned to normal rate.",
-        className: checked
-          ? "border-indigo-500 bg-indigo-50 text-indigo-900"
-          : "",
-      });
+      if (checked) {
+        toast.success(t("toast.on_title"), {
+          description: t("toast.on_desc"),
+          className: "border-indigo-500 bg-indigo-50 text-indigo-900",
+        });
+      } else {
+        toast(t("toast.off_title"), {
+          description: t("toast.off_desc"),
+        });
+      }
     }
   };
 
@@ -56,10 +58,10 @@ export function BoostToggle({ initialMultiplier }: Props) {
           : "bg-card border-border text-card-foreground"
       )}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 text-start">
         <div
           className={cn(
-            "h-10 w-10 rounded-full flex items-center justify-center transition-all",
+            "h-10 w-10 rounded-full flex items-center justify-center transition-all shrink-0",
             isBoosted
               ? "bg-white/20 text-white"
               : "bg-secondary text-muted-foreground"
@@ -72,16 +74,16 @@ export function BoostToggle({ initialMultiplier }: Props) {
           )}
         </div>
         <div>
-          <h3 className="font-semibold text-sm">Happy Hour Boost</h3>
+          <h3 className="font-semibold text-sm leading-none mb-1">
+            {t("title")}
+          </h3>
           <p
             className={cn(
-              "text-xs",
+              "text-xs font-medium",
               isBoosted ? "text-indigo-100" : "text-muted-foreground"
             )}
           >
-            {isBoosted
-              ? "Active: 2x Points Multiplier"
-              : "Off: Normal Points Rate"}
+            {isBoosted ? t("desc_on") : t("desc_off")}
           </p>
         </div>
       </div>
@@ -91,11 +93,8 @@ export function BoostToggle({ initialMultiplier }: Props) {
         onCheckedChange={handleToggle}
         disabled={loading}
         className={cn(
-          "data-[state=checked]:bg-white data-[state=checked]:text-indigo-600",
-          // Customizing the switch thumb color when checked requires deep css or className override depending on shadcn version
-          // If default shadcn: data-[state=checked]:bg-primary.
-          // We override for the purple theme:
-          isBoosted && "data-[state=checked]:bg-indigo-400"
+          "data-[state=checked]:bg-indigo-400",
+          isBoosted && "bg-white/20"
         )}
       />
     </div>

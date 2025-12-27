@@ -1,21 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, Link } from "@/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Loader2, ArrowLeft, Layers, Store, User, Check } from "lucide-react";
+import { Loader2, ArrowLeft, Layers, Store, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function RegisterPage() {
+export default function RegisterPageClient() {
+  const t = useTranslations("Register");
   const router = useRouter();
 
-  // State for Role Toggle
   const [role, setRole] = useState<"BUSINESS" | "CLIENT">("CLIENT");
-
   const [formData, setFormData] = useState({
     name: "",
     businessName: "",
@@ -38,20 +37,17 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          role: role,
-        }),
+        body: JSON.stringify({ ...formData, role }),
       });
 
       if (res.ok) {
         router.push("/login?registered=true");
       } else {
         const data = await res.json();
-        setError(data.error || "Something went wrong");
+        setError(data.error || t("error_generic"));
       }
     } catch (err) {
-      setError("Failed to connect to server");
+      setError(t("error_network"));
     } finally {
       setIsLoading(false);
     }
@@ -59,18 +55,18 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative bg-background text-foreground selection:bg-primary/20 selection:text-primary">
-      {/* 🟢 Navigation */}
-      <div className="absolute top-6 left-6 z-20">
+      {/* 🟢 Navigation / Utilities - RTL Fixed */}
+      <div className="absolute top-6 left-6 rtl:left-auto rtl:right-6 z-20">
         <Link
           href="/"
           className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back</span>
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
+          <span>{t("back")}</span>
         </Link>
       </div>
 
-      <div className="absolute top-6 right-6 z-20">
+      <div className="absolute top-6 right-6 rtl:right-auto rtl:left-6 z-20">
         <ThemeToggle />
       </div>
 
@@ -85,14 +81,12 @@ export default function RegisterPage() {
             <Layers className="w-5 h-5" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Create your account
+            {t("title")}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Get started with Loylpass today.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        {/* 🟢 Modern Segmented Control */}
+        {/* 🟢 Segmented Control */}
         <div className="grid grid-cols-2 p-1 mb-6 bg-secondary/50 rounded-lg border border-border/50">
           <button
             onClick={() => setRole("CLIENT")}
@@ -102,7 +96,7 @@ export default function RegisterPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <User className="w-4 h-4" /> Customer
+            <User className="w-4 h-4" /> {t("role_customer")}
           </button>
           <button
             onClick={() => setRole("BUSINESS")}
@@ -112,54 +106,55 @@ export default function RegisterPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Store className="w-4 h-4" /> Business
+            <Store className="w-4 h-4" /> {t("role_business")}
           </button>
         </div>
 
-        {/* 🟢 Card */}
         <div className="bg-card border border-border/50 shadow-sm rounded-xl overflow-hidden">
-          <form onSubmit={handleRegister} className="p-6 md:p-8 space-y-4">
+          <form
+            onSubmit={handleRegister}
+            className="p-6 md:p-8 space-y-4 text-start"
+          >
             <div className="space-y-2">
               <Label
                 htmlFor="name"
                 className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
               >
-                Full Name
+                {t("label_name")}
               </Label>
               <Input
                 id="name"
-                placeholder="John Doe"
+                placeholder={t("placeholder_name")}
                 value={formData.name}
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                className="h-10 bg-secondary/30 border-border focus:ring-primary/20"
               />
             </div>
 
-            {/* Conditional Business Name with Animation */}
             <AnimatePresence initial={false}>
               {role === "BUSINESS" && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
                   className="space-y-2 overflow-hidden"
                 >
                   <Label
                     htmlFor="businessName"
                     className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
                   >
-                    Business Name
+                    {t("label_business_name")}
                   </Label>
                   <Input
                     id="businessName"
-                    placeholder="Joe's Coffee Shop"
+                    placeholder={t("placeholder_business")}
                     value={formData.businessName}
                     onChange={handleChange}
                     required={role === "BUSINESS"}
                     disabled={isLoading}
-                    className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                    className="h-10 bg-secondary/30 border-border"
                   />
                 </motion.div>
               )}
@@ -170,7 +165,7 @@ export default function RegisterPage() {
                 htmlFor="email"
                 className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
               >
-                Email
+                {t("label_email")}
               </Label>
               <Input
                 id="email"
@@ -180,7 +175,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                className="h-10 bg-secondary/30 border-border"
               />
             </div>
 
@@ -189,7 +184,7 @@ export default function RegisterPage() {
                 htmlFor="password"
                 className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
               >
-                Password
+                {t("label_password")}
               </Label>
               <Input
                 id="password"
@@ -199,7 +194,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="h-10 bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 transition-all font-sans"
+                className="h-10 bg-secondary/30 border-border"
               />
             </div>
 
@@ -213,28 +208,28 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-md transition-all shadow-sm flex items-center gap-2"
+              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-md shadow-sm flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                  <Loader2 className="w-4 h-4 animate-spin" /> {t("processing")}
                 </>
               ) : role === "BUSINESS" ? (
-                <>Create Business Account</>
+                t("submit_business")
               ) : (
-                <>Join as Customer</>
+                t("submit_customer")
               )}
             </Button>
           </form>
         </div>
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t("already_have_account")}{" "}
           <Link
             href="/login"
             className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
-            Sign in
+            {t("sign_in")}
           </Link>
         </p>
       </motion.div>

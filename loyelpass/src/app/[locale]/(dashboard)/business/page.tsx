@@ -14,17 +14,10 @@ import {
   HourlyActivityChart,
   TopWaitersChart,
 } from "@/components/BusinessCharts";
-import {
-  Gift,
-  Users,
-  TrendingUp,
-  Sparkles,
-  Store,
-  ArrowUpRight,
-  MoreHorizontal,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Users, Store, Layers } from "lucide-react";
 import { BoostToggle } from "./BoostToggle";
+import { ProgramActions } from "@/components/ProgramActions";
+import { getLocale, getTranslations } from "next-intl/server";
 
 function getLast7Days() {
   const dates = [];
@@ -36,7 +29,7 @@ function getLast7Days() {
   return dates;
 }
 
-async function getDashboardData(userId: string) {
+async function getDashboardData(userId: string, locale: string) {
   const business = await prisma.business.findUnique({
     where: { ownerId: userId },
     include: {
@@ -48,65 +41,57 @@ async function getDashboardData(userId: string) {
 
   const multiplier = business.pointsMultiplier || 1.0;
 
-  // 1. Fetch Stats
   const distinctClients = await prisma.clientProgress.groupBy({
     by: ["clientId"],
     where: { program: { businessId: business.id } },
   });
 
-  // 🟢 UPDATE: Fetch transactions with Waiter details for the charts
   const purchases = await prisma.purchase.findMany({
     where: { businessId: business.id, redeemed: true },
     include: {
-      waiter: { select: { username: true } }, // Get waiter name
+      waiter: { select: { username: true } },
     },
     orderBy: { createdAt: "asc" },
   });
 
-  // Calculate Totals
   const totalClients = distinctClients.length;
   const totalPoints = purchases.reduce(
     (acc, curr) => acc + curr.pointsAwarded,
     0
   );
 
-  // --- DATA PROCESSING FOR CHARTS ---
-
-  // A. Area Chart (Last 7 Days) - Existing Logic
+  // Area Chart with Localized Dates
   const last7Days = getLast7Days();
   const rawDataMap = new Map<string, number>();
   purchases.forEach((p) => {
     const date = p.createdAt.toISOString().split("T")[0];
-    const current = rawDataMap.get(date) || 0;
-    rawDataMap.set(date, current + p.pointsAwarded);
+    rawDataMap.set(date, (rawDataMap.get(date) || 0) + p.pointsAwarded);
   });
+
   const chartData = last7Days.map((date) => ({
     date: date,
-    displayDate: new Date(date).toLocaleDateString("en-US", {
+    displayDate: new Date(date).toLocaleDateString(locale, {
       month: "short",
       day: "numeric",
     }),
     points: rawDataMap.get(date) || 0,
   }));
 
-  // B. Hourly Activity (New)
+  // Hourly Activity
   const hoursArray = new Array(24).fill(0);
   purchases.forEach((p) => {
-    // Determine hour (0-23). Note: This uses server time.
-    // Ideally, convert to business timezone.
     const hour = p.createdAt.getHours();
     hoursArray[hour]++;
   });
 
-  // Format for Chart (only showing 10am to 10pm usually matters, but let's show all or filtered)
   const hourlyData = hoursArray
     .map((count, i) => ({
       hour: `${i}:00`,
       count,
     }))
-    .filter((_, i) => i >= 8 && i <= 23); // Showing 8AM to 11PM for cleanliness
+    .filter((_, i) => i >= 8 && i <= 23);
 
-  // C. Top Waiters (New)
+  // Top Waiters
   const waiterMap = new Map<string, number>();
   purchases.forEach((p) => {
     const name = p.waiter?.username || "Unknown";
@@ -114,7 +99,6 @@ async function getDashboardData(userId: string) {
     waiterMap.set(name, current + Number(p.totalAmount));
   });
 
-  // Sort by revenue descending and take top 5
   const waiterData = Array.from(waiterMap.entries())
     .map(([name, revenue]) => ({ name, revenue }))
     .sort((a, b) => b.revenue - a.revenue)
@@ -125,21 +109,23 @@ async function getDashboardData(userId: string) {
     programs: business.loyaltyPrograms,
     totalClients,
     totalPoints,
-    chartData, // Area Chart
-    hourlyData, // New Bar Chart
-    waiterData, // New Horizontal Bar Chart
+    chartData,
+    hourlyData,
+    waiterData,
     multiplier,
   };
 }
 
 export default async function BusinessDashboard() {
+  const locale = await getLocale();
+  const t = await getTranslations("BusinessDashboard");
   const session = await auth();
-  const data = await getDashboardData(session?.user?.id as string);
+  const data = await getDashboardData(session?.user?.id as string, locale);
 
   if (!data)
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 text-center">
           <div className="relative">
             <div className="h-12 w-12 rounded-xl bg-secondary animate-pulse" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -147,99 +133,137 @@ export default async function BusinessDashboard() {
             </div>
           </div>
           <p className="text-sm font-medium text-muted-foreground animate-pulse">
-            Initializing Dashboard...
+            {t("loading")}
           </p>
         </div>
       </div>
     );
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
-      {/* 1. Header (Keep existing) */}
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10 text-start">
+      {/* 1. Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-6">
         <div>
-          {/* ... existing header code ... */}
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
             {data.businessName}
           </h2>
-          {/* ... */}
         </div>
         <CreateProgramModal />
       </div>
 
-      {/* 2. Stats Grid (Keep existing) */}
+      {/* 2. Stats Grid */}
       <div className="grid gap-4 md:grid-cols-3">
-        {/* ... existing stats cards for Clients, Points, Programs ... */}
+        {/* Clients Card */}
         <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm">
-          {/* Example Card Content */}
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Total Clients
+              {t("stats.totalClients")}
             </span>
             <Users className="h-4 w-4 text-muted-foreground" />
           </div>
-          <span className="text-3xl font-semibold tracking-tight">
+          <span className="text-3xl font-semibold tracking-tight tabular-nums">
             {data.totalClients}
           </span>
         </div>
-        {/* Repeat for other 2 cards... */}
+
+        {/* Points Card */}
+        <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {t("stats.totalPoints")}
+            </span>
+            <Store className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <span className="text-3xl font-semibold tracking-tight tabular-nums">
+            {data.totalPoints}
+          </span>
+        </div>
+
+        {/* Programs Count Card */}
+        <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {t("stats.activePrograms")}
+            </span>
+            <Layers className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <span className="text-3xl font-semibold tracking-tight tabular-nums">
+            {data.programs.filter((p) => p.active).length}
+          </span>
+        </div>
       </div>
 
       {/* 3. Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* LEFT COLUMN: Main Chart (Takes 2/3 width) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Main Area Chart */}
           <Card className="border border-border/50 shadow-sm bg-card rounded-xl">
-            <CardHeader className="pb-2 border-b border-border/50 mb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                    Activity Trend
-                  </CardTitle>
-                  <CardDescription className="text-xs mt-1">
-                    Points redeemed (last 7 days)
-                  </CardDescription>
-                </div>
-              </div>
+            <CardHeader className="pb-2 border-b border-border/50 mb-4 text-start">
+              <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                {t("charts.activityTrend")}
+              </CardTitle>
+              <CardDescription className="text-xs mt-1">
+                {t("charts.activityTrendDesc")}
+              </CardDescription>
             </CardHeader>
-            <CardContent className="pt-2 pl-0">
+            <CardContent className="pt-2 ps-0">
               <OverviewChart data={data.chartData} />
             </CardContent>
           </Card>
 
-          {/* 🟢 NEW: Secondary Charts Grid (Nested inside left column) */}
           <div className="grid gap-6 md:grid-cols-2">
-            <HourlyActivityChart data={data.hourlyData} />
-            <TopWaitersChart data={data.waiterData} />
+            <HourlyActivityChart
+              data={data.hourlyData}
+              title={t("charts.hourlyActivity")}
+            />
+            <TopWaitersChart
+              data={data.waiterData}
+              title={t("charts.topWaiters")}
+            />
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Boost Toggle + Programs List (Takes 1/3 width) */}
         <div className="space-y-6">
           <BoostToggle initialMultiplier={data.multiplier} />
 
-          {/* Programs List (Keep existing) */}
           <Card className="border border-border/50 shadow-sm bg-card rounded-xl h-fit">
-            <CardHeader className="pb-2 border-b border-border/50 mb-4">
+            <CardHeader className="pb-2 border-b border-border/50 mb-4 text-start">
               <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                Active Programs
+                {t("programs.title")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* ... existing programs map logic ... */}
               <div className="space-y-3">
-                {data.programs.slice(0, 5).map((p) => (
+                {data.programs.map((p) => (
                   <div
                     key={p.id}
-                    className="flex justify-between p-2 border rounded text-sm"
+                    className="flex items-center justify-between p-3 border rounded-lg bg-background text-start"
                   >
-                    <span>{p.name}</span>
-                    <Badge variant="outline">
-                      {p.active ? "Active" : "Off"}
-                    </Badge>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{p.name}</span>
+                        <Badge variant={p.active ? "default" : "secondary"}>
+                          {p.active
+                            ? t("programs.active")
+                            : t("programs.inactive")}
+                        </Badge>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {t("programs.logic", {
+                          threshold: p.pointsThreshold,
+                          value: p.rewardValue,
+                        })}
+                      </span>
+                    </div>
+
+                    <ProgramActions program={p} />
                   </div>
                 ))}
+
+                {data.programs.length === 0 && (
+                  <div className="text-center text-sm text-muted-foreground py-4">
+                    {t("programs.empty")}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

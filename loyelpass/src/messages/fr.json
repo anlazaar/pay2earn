@@ -1,0 +1,382 @@
+{
+  "Navbar": {
+    "links": {
+      "product": "Produit",
+      "pricing": "Tarification"
+    },
+    "login": "Se connecter",
+    "register": "Commencer gratuitement"
+  },
+  "Hero": {
+    "badge": "QR Analytics 2.0 est en ligne",
+    "badge_new": "Nouveau",
+    "title_start": "La fidélité client,",
+    "title_gradient": "réinventée pour la vitesse.",
+    "subtitle": "Loylpass vous aide à générer des revenus récurrents sans applications complexes. Scan QR instantané, récompenses automatisées et données en temps réel.",
+    "cta_primary": "Commencer",
+    "cta_secondary": "Voir la démo",
+    "trusted_by": "Recommandé par les équipes retail modernes"
+  },
+  "ProductShowcase": {
+    "title_start": "De la Table au Tableau de Bord,",
+    "title_gradient": "Instantanément.",
+    "subtitle": "Découvrez comment les actions des serveurs se synchronisent avec vos analyses en temps réel.",
+    "sidebar": {
+      "overview": "Aperçu",
+      "live_feed": "Flux en Direct",
+      "campaigns": "Campagnes",
+      "staff": "Personnel",
+      "settings": "Paramètres"
+    },
+    "dashboard": {
+      "live_activity": "Activité en Direct",
+      "branch_info": "Succursale Casablanca • Aujourd'hui",
+      "currency": "MAD",
+      "stats_growth": "+12% vs hier",
+      "recent_scans": "Scans Récents",
+      "just_now": "À l'instant",
+      "mins_ago": "Il y a {count}m"
+    },
+    "phone": {
+      "new_sale": "Nouvelle Vente",
+      "total_amount": "Montant Total",
+      "scan_prompt": "Présentez au client pour scanner",
+      "table_link": "Lié à la Table 5",
+      "btn_transaction": "Nouvelle Transaction"
+    }
+  },
+  "FeaturesGrid": {
+    "title": "Conçu pour tout l'écosystème <line></line> de la restauration.",
+    "subtitle": "Interfaces basées sur les rôles pour Propriétaires, Serveurs et Clients. Sécurisé et instantané.",
+    "card1": {
+      "title": "Passage de main instantané",
+      "description": "Les serveurs génèrent un QR code à table. Les clients scannent pour réclamer leurs points. Aucun matériel requis.",
+      "waiter_mode": "MODE_SERVEUR",
+      "btn_generate": "Générer QR",
+      "scan_to_claim": "scanner_pour_recevoir"
+    },
+    "card2": {
+      "title": "Logique de Récompense",
+      "description": "Configurez des règles complexes adaptées à vos marges.",
+      "rules": [
+        { "label": "Points par Montant", "val": "10 MAD = 1 Pt" },
+        { "label": "Points par Produit", "val": "Espresso = 5 Pts" },
+        { "label": "Forfait par Visite", "val": "1 Visite = 10 Pts" }
+      ]
+    },
+    "card3": {
+      "title": "Prévention de Fraude",
+      "description": "Les QR codes expirent après 60 secondes et incluent des identifiants d'achat uniques.",
+      "badge": "SIGNÉ_JWT"
+    },
+    "card4": {
+      "title": "Suivi du Personnel",
+      "description": "Suivez quels serveurs génèrent le plus d'inscriptions au programme de fidélité.",
+      "performance": "+2 performants"
+    },
+    "card5": {
+      "title": "Expérience Gamifiée",
+      "description": "Les clients suivent leur progression et débloquent des paliers directement sur leur mobile.",
+      "tiers": [
+        { "name": "Argent", "points": "0 pts" },
+        { "name": "Or", "points": "500 pts" },
+        { "name": "Platine", "points": "1k pts" }
+      ]
+    }
+  },
+  "Pricing": {
+    "title": "Tarification simple et transparente.",
+    "subtitle": "Pas de frais cachés. Annulez à tout moment. Prix en MAD.",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "discount": "-18%",
+    "currency": "MAD",
+    "per_month": "/mois",
+    "billed_annually": "Facturé {amount} MAD par an",
+    "custom": "Sur mesure",
+    "popular_badge": "LE PLUS POPULAIRE",
+    "plans": [
+      {
+        "name": "Starter",
+        "desc": "Pour les petits cafés qui débutent.",
+        "cta": "Commencer gratuitement",
+        "features": [
+          "Jusqu'à 100 utilisateurs actifs mensuels",
+          "1 Emplacement",
+          "Génération de codes QR de base",
+          "Analyses standards"
+        ]
+      },
+      {
+        "name": "Growth",
+        "desc": "Pour les entreprises en croissance et franchises.",
+        "cta": "Essai gratuit de 14 jours",
+        "features": [
+          "Utilisateurs actifs illimités",
+          "Jusqu'à 3 emplacements",
+          "Données clients avancées (CRM)",
+          "Intégrations marketing Email & SMS",
+          "Suivi des performances du personnel",
+          "Suppression de la mention 'Powered by Loylpass'"
+        ]
+      },
+      {
+        "name": "Enterprise",
+        "desc": "Pour les grandes chaînes exigeantes.",
+        "cta": "Contacter le service commercial",
+        "features": [
+          "Emplacements illimités",
+          "Gestionnaire de compte dédié",
+          "Accès API personnalisé",
+          "SSO et sécurité avancée",
+          "Option application mobile en marque blanche",
+          "Support avec engagement de service (SLA)"
+        ]
+      }
+    ]
+  },
+  "Footer": {
+    "tagline": "L'infrastructure de fidélisation moderne pour les entreprises visionnaires du Maroc.",
+    "product": {
+      "title": "Produit",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "api": "API",
+      "changelog": "Notes de mise à jour"
+    },
+    "company": {
+      "title": "Entreprise",
+      "about": "À propos",
+      "blog": "Blog",
+      "careers": "Recrutement",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Juridique",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "security": "Sécurité"
+    },
+    "copyright": "© 2025 Loylpass SARL. Tous droits réservés.",
+    "location": "Oujda, Maroc",
+    "status": "Tous les systèmes sont opérationnels"
+  },
+
+  "Login": {
+    "back": "Retour",
+    "title": "Se connecter à Loylpass",
+    "subtitle": "Entrez vos identifiants pour accéder à l’espace de travail.",
+    "email_label": "Adresse e-mail",
+    "email_placeholder": "nom@entreprise.com",
+    "password_label": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "submit": "Se connecter",
+    "demo_title": "Identifiants de démonstration",
+    "no_account": "Vous n’avez pas de compte ?",
+    "register_link": "Créer un compte gratuitement",
+    "errors": {
+      "invalid": "Adresse e-mail ou mot de passe incorrect.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "Register": {
+    "back": "Retour",
+    "title": "Créer votre compte",
+    "subtitle": "Commencez avec Loylpass dès aujourd’hui.",
+    "role_customer": "Client",
+    "role_business": "Entreprise",
+    "label_name": "Nom complet",
+    "label_business_name": "Nom de l’entreprise",
+    "label_email": "Adresse e-mail",
+    "label_password": "Mot de passe",
+    "placeholder_name": "Jean Dupont",
+    "placeholder_business": "Café de Joe",
+    "submit_customer": "Rejoindre en tant que client",
+    "submit_business": "Créer un compte entreprise",
+    "processing": "Traitement en cours...",
+    "already_have_account": "Vous avez déjà un compte ?",
+    "sign_in": "Se connecter",
+    "error_generic": "Une erreur est survenue",
+    "error_network": "Impossible de se connecter au serveur"
+  },
+  "CreateProgramModal": {
+    "trigger": "Créer un programme",
+    "title": "Nouveau programme de fidélité",
+    "description": "Configurez les règles d'obtention et d'utilisation des points.",
+    "label_name": "Nom interne",
+    "placeholder_name": "ex: Club Café Été",
+    "label_type": "Type",
+    "placeholder_type": "Choisir le type",
+    "types": {
+      "free_item": "Article gratuit",
+      "discount": "Remise",
+      "custom": "Personnalisé"
+    },
+    "label_reward": "Récompense",
+    "label_value_percent": "Valeur (%)",
+    "placeholder_reward": "Latte gratuit",
+    "label_threshold": "Seuil",
+    "threshold_prefix": "POINTS_REQUIS:",
+    "advanced_toggle": "Logique avancée",
+    "label_multiplier": "Multiplicateur de devise",
+    "multiplier_suffix": "pts/unité",
+    "multiplier_help": "Ex: '10' signifie 100 MAD dépensés = 1000 points.",
+    "submit": "Créer le programme",
+    "submitting": "Création...",
+    "error": "Échec de la création du programme",
+    "discount_suffix": "% de remise"
+  },
+  "DashboardShell": {
+    "roles": {
+      "BUSINESS": "Gestion",
+      "WAITER": "Espace personnel",
+      "ADMIN": "Panneau d’administration",
+      "CLIENT": "Adhésion"
+    },
+    "titles": {
+      "BUSINESS": "Tableau de bord entreprise",
+      "WAITER": "Point de vente",
+      "ADMIN": "Administration système",
+      "CLIENT": "Mon portefeuille"
+    },
+    "nav": {
+      "overview": "Vue d’ensemble",
+      "transactions": "Transactions",
+      "programs": "Programmes",
+      "products": "Menu et produits",
+      "waiters": "Personnel / Serveurs",
+      "admin_overview": "Vue système",
+      "manage_businesses": "Gestion des entreprises",
+      "global_settings": "Paramètres globaux",
+      "pos": "Terminal de caisse",
+      "history": "Historique",
+      "wallet": "Mon portefeuille",
+      "scan": "Scanner un code",
+      "rewards": "Récompenses"
+    },
+    "ui": {
+      "dashboard": "Tableau de bord",
+      "workspace": "espace de travail",
+      "signOut": "Se déconnecter"
+    }
+  },
+  "BusinessDashboard": {
+    "loading": "Initialisation du tableau de bord...",
+    "stats": {
+      "totalClients": "Nombre total de clients",
+      "totalPoints": "Total des points",
+      "activePrograms": "Programmes actifs"
+    },
+    "charts": {
+      "activityTrend": "Tendance d’activité",
+      "activityTrendDesc": "Points utilisés (7 derniers jours)",
+      "hourlyActivity": "Activité horaire",
+      "topWaiters": "Meilleurs serveurs"
+    },
+    "programs": {
+      "title": "Programmes actifs",
+      "empty": "Aucun programme créé pour le moment.",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "logic": "{threshold} pts = {value}"
+    }
+  },
+  "BusinessCharts": {
+    "hourly": {
+      "title": "Heures de pointe",
+      "desc": "Volume des transactions par heure",
+      "unit": "ventes"
+    },
+    "waiters": {
+      "title": "Meilleur personnel",
+      "desc": "Chiffre d'affaires par serveur"
+    }
+  },
+  "BoostToggle": {
+    "title": "Boost Heures Joyeuses",
+    "desc_on": "Actif : Multiplicateur de points x2",
+    "desc_off": "Désactivé : Taux de points normal",
+    "toast": {
+      "on_title": "🚀 Boost Activé !",
+      "on_desc": "Les clients gagnent désormais le double de points.",
+      "off_title": "Boost Désactivé",
+      "off_desc": "Retour au taux de points normal.",
+      "error_title": "Erreur",
+      "error_desc": "Échec de la mise à jour des paramètres de boost."
+    }
+  },
+  "TransactionsPage": {
+    "title": "Historique des Transactions",
+    "subtitle": "Journal d'audit de tous les points attribués par votre personnel.",
+    "recent_activity": "Activité Récente",
+    "showing_count": "Affichage des 50 dernières transactions.",
+    "table": {
+      "date": "Date et Heure",
+      "staff": "Membre du personnel",
+      "customer": "Client",
+      "items": "Articles",
+      "amount": "Montant",
+      "points": "Points"
+    },
+    "guest": "Invité",
+    "unknown": "Inconnu",
+    "custom_amount": "Montant Personnalisé",
+    "empty": "Aucune transaction enregistrée pour le moment."
+  },
+  "ProductsPage": {
+    "title": "Menu et Produits",
+    "subtitle": "Gérez les articles éligibles aux points de fidélité.",
+    "add_button": "Ajouter un produit",
+    "standard_item": "Article Standard",
+    "reward_value": "Valeur Récompense",
+    "empty": {
+      "title": "Aucun produit",
+      "desc": "Ajoutez vos meilleures ventes ici pour calculer automatiquement les points."
+    },
+    "form": {
+      "title": "Nouveau Produit",
+      "desc": "Ajoutez un article au menu. Définissez le prix et les points attribués.",
+      "label_name": "Nom du produit",
+      "placeholder_name": "ex: Cappuccino",
+      "label_price": "Prix",
+      "label_points": "Points attribués",
+      "submit": "Enregistrer",
+      "loading": "Enregistrement..."
+    },
+    "toasts": {
+      "success_title": "Succès",
+      "created_desc": "L'article a été ajouté à votre menu.",
+      "deleted_desc": "Produit supprimé avec succès.",
+      "error_title": "Erreur",
+      "confirm_delete": "Êtes-vous sûr de vouloir supprimer ce produit ?"
+    }
+  },
+  "WaitersPage": {
+    "title": "Gestion du Personnel",
+    "subtitle": "Gérez l'accès pour vos serveurs et opérateurs de caisse.",
+    "form": {
+      "card_title": "Ajouter un membre",
+      "card_desc": "Créer un compte pour l'accès au TPV.",
+      "name_label": "Nom complet",
+      "name_placeholder": "ex: Alex Johnson",
+      "email_label": "Adresse E-mail",
+      "email_placeholder": "staff@restaurant.com",
+      "password_label": "Définir mot de passe",
+      "password_placeholder": "••••••••",
+      "password_help": "Minimum 6 caractères. Doit contenir au moins un chiffre.",
+      "submit": "Créer le compte",
+      "submitting": "Création..."
+    },
+    "list": {
+      "loading": "Chargement de la liste...",
+      "empty": "Aucun serveur trouvé.",
+      "unknown": "Inconnu",
+      "active": "Actif",
+      "added_label": "Ajouté le"
+    },
+    "alerts": {
+      "success": "Compte personnel créé avec succès.",
+      "error": "Échec de la création du serveur."
+    }
+  }
+}

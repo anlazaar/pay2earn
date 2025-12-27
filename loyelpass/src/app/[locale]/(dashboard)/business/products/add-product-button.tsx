@@ -14,10 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Loader2 } from "lucide-react";
-import { createProduct } from "./actions"; // Import the server action
+import { createProduct } from "./actions";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export function AddProductButton() {
+  const t = useTranslations("ProductsPage");
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,14 +34,11 @@ export function AddProductButton() {
 
     if (result.success) {
       setOpen(false);
-      toast({
-        title: "Product Created",
-        description: "The item has been added to your menu.",
+      toast.success(t("toasts.success_title"), {
+        description: t("toasts.created_desc"),
       });
     } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
+      toast.error(t("toasts.error_title"), {
         description: result.error || "Something went wrong.",
       });
     }
@@ -49,26 +48,23 @@ export function AddProductButton() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
-          <Plus className="h-4 w-4" /> Add Product
+          <Plus className="h-4 w-4" /> {t("add_button")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
-          <DialogDescription>
-            Add an item to your menu. Set the price and how many points it
-            awards.
-          </DialogDescription>
+          <DialogTitle>{t("form.title")}</DialogTitle>
+          <DialogDescription>{t("form.desc")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           {/* Name Input */}
           <div className="grid gap-2">
-            <Label htmlFor="name">Product Name</Label>
+            <Label htmlFor="name">{t("form.label_name")}</Label>
             <Input
               id="name"
               name="name"
-              placeholder="e.g. Cappuccino"
+              placeholder={t("form.placeholder_name")}
               required
             />
           </div>
@@ -76,7 +72,7 @@ export function AddProductButton() {
           <div className="grid grid-cols-2 gap-4">
             {/* Price Input */}
             <div className="grid gap-2">
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">{t("form.label_price")}</Label>
               <Input
                 id="price"
                 name="price"
@@ -90,7 +86,7 @@ export function AddProductButton() {
 
             {/* Points Input */}
             <div className="grid gap-2">
-              <Label htmlFor="points">Points Awarded</Label>
+              <Label htmlFor="points">{t("form.label_points")}</Label>
               <Input
                 id="points"
                 name="points"
@@ -104,7 +100,7 @@ export function AddProductButton() {
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Product
+              {isLoading ? t("form.loading") : t("form.submit")}
             </Button>
           </DialogFooter>
         </form>

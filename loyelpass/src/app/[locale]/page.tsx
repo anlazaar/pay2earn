@@ -4,8 +4,18 @@ import { ProductShowcase } from "@/components/Landing/ProductShowcase";
 import { FeaturesGrid } from "@/components/Landing/FeaturesGrid";
 import { Pricing } from "@/components/Landing/Pricing";
 import { Footer } from "@/components/Landing/Footer";
+import { setRequestLocale } from "next-intl/server";
 
-export default function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>; // Must be a Promise
+}) {
+  const { locale } = await params; // Must await it
+
+  // This is required for static rendering in next-intl
+  setRequestLocale(locale);
+
   return (
     // The bg-transparent is crucial so the body noise/mesh texture shows through
     <div className="min-h-screen flex flex-col bg-transparent text-foreground selection:bg-primary/30 selection:text-black overflow-x-hidden">
@@ -15,12 +25,8 @@ export default function Home() {
         <Hero />
         <ProductShowcase />
         <FeaturesGrid />
-        <Pricing/>
-        <Footer/>
-        {/* Placeholder for Next Steps */}
-        <section className="h-[50vh] flex items-center justify-center text-muted-foreground/40">
-          ... Features Section Loading ...
-        </section>
+        <Pricing />
+        <Footer />
       </main>
     </div>
   );

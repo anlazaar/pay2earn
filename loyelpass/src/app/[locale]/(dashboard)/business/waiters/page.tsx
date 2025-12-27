@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -14,17 +13,20 @@ import {
 } from "@/components/ui/card";
 import {
   UserPlus,
-  Users,
   Mail,
   Lock,
   User,
   Loader2,
-  MoreVertical,
-  Search,
   CheckCircle2,
 } from "lucide-react";
+import { WaiterActions } from "@/components/WaiterActions";
+import { useFormatter, useTranslations } from "next-intl";
+import { toast } from "sonner"; // Assuming you have sonner installed based on previous files
 
 export default function WaitersPage() {
+  const t = useTranslations("WaitersPage");
+  const format = useFormatter();
+
   const [waiters, setWaiters] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -55,12 +57,16 @@ export default function WaitersPage() {
         method: "POST",
         body: JSON.stringify(formData),
       });
+
       if (res.ok) {
         setFormData({ name: "", email: "", password: "" });
+        toast.success(t("alerts.success"));
         fetchWaiters();
       } else {
-        alert("Failed to create waiter");
+        toast.error(t("alerts.error"));
       }
+    } catch (error) {
+      toast.error(t("alerts.error"));
     } finally {
       setLoading(false);
     }
@@ -72,11 +78,9 @@ export default function WaitersPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/50 pb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Staff Management
+            {t("title")}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage access for your waiters and POS operators.
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">{t("subtitle")}</p>
         </div>
       </div>
 
@@ -89,10 +93,10 @@ export default function WaitersPage() {
                 <div className="h-7 w-7 rounded bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                   <UserPlus className="h-4 w-4" />
                 </div>
-                Add New Staff
+                {t("form.card_title")}
               </CardTitle>
               <CardDescription className="text-xs">
-                Create an account for POS access.
+                {t("form.card_desc")}
               </CardDescription>
             </CardHeader>
 
@@ -103,7 +107,7 @@ export default function WaitersPage() {
                     htmlFor="name"
                     className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
                   >
-                    Full Name
+                    {t("form.name_label")}
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -115,7 +119,7 @@ export default function WaitersPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      placeholder="e.g. Alex Johnson"
+                      placeholder={t("form.name_placeholder")}
                     />
                   </div>
                 </div>
@@ -125,7 +129,7 @@ export default function WaitersPage() {
                     htmlFor="email"
                     className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
                   >
-                    Email Address
+                    {t("form.email_label")}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -138,7 +142,7 @@ export default function WaitersPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      placeholder="staff@restaurant.com"
+                      placeholder={t("form.email_placeholder")}
                     />
                   </div>
                 </div>
@@ -148,7 +152,7 @@ export default function WaitersPage() {
                     htmlFor="password"
                     className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
                   >
-                    Set Password
+                    {t("form.password_label")}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -161,11 +165,11 @@ export default function WaitersPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
-                      placeholder="••••••••"
+                      placeholder={t("form.password_placeholder")}
                     />
                   </div>
                   <p className="text-[10px] text-muted-foreground pt-1">
-                    Minimum 6 characters. Must contain at least one number.
+                    {t("form.password_help")}
                   </p>
                 </div>
 
@@ -177,10 +181,10 @@ export default function WaitersPage() {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
+                      {t("form.submitting")}
                     </>
                   ) : (
-                    "Create Account"
+                    t("form.submit")
                   )}
                 </Button>
               </form>
@@ -191,47 +195,17 @@ export default function WaitersPage() {
         {/* 🟢 Column 2: Staff List (8 cols) */}
         <div className="lg:col-span-7 xl:col-span-8">
           <Card className="h-full border border-border/50 shadow-sm bg-card rounded-xl flex flex-col">
-            <CardHeader className="pb-4 border-b border-border/50">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  Team Members
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <div className="relative hidden sm:block">
-                    <Search className="absolute left-2.5 top-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                    <input
-                      className="h-7 w-48 rounded bg-secondary/30 border border-border pl-8 text-xs outline-none focus:ring-1 focus:ring-primary"
-                      placeholder="Search staff..."
-                    />
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="h-6 bg-secondary/50 font-normal"
-                  >
-                    {waiters.length} Active
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-
             <CardContent className="flex-1 p-0">
               {fetching ? (
-                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                  <Loader2 className="h-6 w-6 animate-spin mb-3 text-primary" />
-                  <p className="text-xs">Loading team...</p>
+                <div className="p-10 text-center flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    {t("list.loading")}
+                  </span>
                 </div>
               ) : waiters.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="h-10 w-10 bg-secondary rounded-full flex items-center justify-center mb-3">
-                    <Users className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-medium text-sm text-foreground">
-                    No staff found
-                  </h3>
-                  <p className="text-xs text-muted-foreground max-w-[200px] mt-1">
-                    Get started by adding your first waiter using the form.
-                  </p>
+                <div className="p-10 text-center text-sm text-muted-foreground">
+                  {t("list.empty")}
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
@@ -249,10 +223,11 @@ export default function WaitersPage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-sm text-foreground">
-                              {waiter.username || "Unknown"}
+                              {waiter.username || t("list.unknown")}
                             </p>
                             <div className="flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                              <CheckCircle2 className="w-3 h-3" /> Active
+                              <CheckCircle2 className="w-3 h-3" />{" "}
+                              {t("list.active")}
                             </div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5">
@@ -264,20 +239,22 @@ export default function WaitersPage() {
                       <div className="flex items-center gap-6">
                         <div className="text-right hidden sm:block">
                           <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-0.5">
-                            Added
+                            {t("list.added_label")}
                           </p>
                           <p className="text-xs font-mono text-foreground">
-                            {new Date(waiter.createdAt).toLocaleDateString()}
+                            {/* Localized Date */}
+                            {format.dateTime(new Date(waiter.createdAt), {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
                           </p>
                         </div>
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
+                        <WaiterActions
+                          waiter={waiter}
+                          onSuccess={fetchWaiters}
+                        />
                       </div>
                     </div>
                   ))}

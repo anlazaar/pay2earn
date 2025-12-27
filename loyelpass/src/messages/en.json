@@ -1,0 +1,383 @@
+{
+  "Navbar": {
+    "links": {
+      "product": "Product",
+      "pricing": "Pricing"
+    },
+    "login": "Log in",
+    "register": "Start for free"
+  },
+  "Hero": {
+    "badge": "QR Analytics 2.0 is live",
+    "badge_new": "New",
+    "title_start": "Customer loyalty,",
+    "title_gradient": "reinvented for speed.",
+    "subtitle": "Loylpass helps you build recurring revenue without the clunky apps. Instant QR scanning, automated rewards, and real-time data.",
+    "cta_primary": "Get Started",
+    "cta_secondary": "View Demo",
+    "trusted_by": "Trusted by modern retail teams"
+  },
+  "ProductShowcase": {
+    "title_start": "From Table to Dashboard,",
+    "title_gradient": "Instantly.",
+    "subtitle": "See how waiter actions sync with your analytics in real-time.",
+    "sidebar": {
+      "overview": "Overview",
+      "live_feed": "Live Feed",
+      "campaigns": "Campaigns",
+      "staff": "Staff",
+      "settings": "Settings"
+    },
+    "dashboard": {
+      "live_activity": "Live Activity",
+      "branch_info": "Casablanca Branch • Today",
+      "currency": "MAD",
+      "stats_growth": "+12% vs yesterday",
+      "recent_scans": "Recent Scans",
+      "just_now": "Just now",
+      "mins_ago": "{count}m ago"
+    },
+    "phone": {
+      "new_sale": "New Sale",
+      "total_amount": "Total Amount",
+      "scan_prompt": "Show to client to scan",
+      "table_link": "Linked to Table 5",
+      "btn_transaction": "New Transaction"
+    }
+  },
+  "FeaturesGrid": {
+    "title": "Built for the entire <line></line> hospitality ecosystem.",
+    "subtitle": "Role-based interfaces for Owners, Waiters, and Clients. Secure, scalable, and instant.",
+    "card1": {
+      "title": "Instant Waiter Handover",
+      "description": "Waiters generate a secure QR code at the table. Clients scan to claim points instantly. No hardware required.",
+      "waiter_mode": "WAITER_MODE",
+      "btn_generate": "Generate QR",
+      "scan_to_claim": "scan_to_claim"
+    },
+    "card2": {
+      "title": "Smart Reward Logic",
+      "description": "Configure complex rules that fit your margins.",
+      "rules": [
+        { "label": "Points by Amount", "val": "10 MAD = 1 Pt" },
+        { "label": "Points by Product", "val": "Espresso = 5 Pts" },
+        { "label": "Flat per Visit", "val": "1 Visit = 10 Pts" }
+      ]
+    },
+    "card3": {
+      "title": "Fraud Prevention",
+      "description": "QRs include unique purchase IDs and expire automatically after 60 seconds.",
+      "badge": "JWT_SIGNED"
+    },
+    "card4": {
+      "title": "Staff Tracking",
+      "description": "Monitor which waiters generate the most loyalty sign-ups.",
+      "performance": "+2 top performers"
+    },
+    "card5": {
+      "title": "Gamified Experience",
+      "description": "Clients track progress, view unlocked tiers, and redeem rewards directly from their phone browser.",
+      "tiers": [
+        { "name": "Silver", "points": "0 pts" },
+        { "name": "Gold", "points": "500 pts" },
+        { "name": "Platinum", "points": "1k pts" }
+      ]
+    }
+  },
+  "Pricing": {
+    "title": "Simple, transparent pricing.",
+    "subtitle": "No hidden fees. Cancel anytime. Prices in MAD.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "discount": "-18%",
+    "currency": "MAD",
+    "per_month": "/mo",
+    "billed_annually": "Billed {amount} MAD yearly",
+    "custom": "Custom",
+    "popular_badge": "MOST POPULAR",
+    "plans": [
+      {
+        "name": "Starter",
+        "desc": "For small cafés just getting started.",
+        "cta": "Start for Free",
+        "features": [
+          "Up to 100 Monthly Active Users",
+          "1 Location",
+          "Basic QR Code generation",
+          "Standard Analytics"
+        ]
+      },
+      {
+        "name": "Growth",
+        "desc": "For growing businesses & franchises.",
+        "cta": "Start 14-Day Trial",
+        "features": [
+          "Unlimited Active Users",
+          "Up to 3 Locations",
+          "Advanced Customer Data (CRM)",
+          "Email & SMS Marketing Integrations",
+          "Staff Performance Tracking",
+          "Remove 'Powered by Loylpass'"
+        ]
+      },
+      {
+        "name": "Enterprise",
+        "desc": "For large chains requiring control.",
+        "cta": "Contact Sales",
+        "features": [
+          "Unlimited Locations",
+          "Dedicated Success Manager",
+          "Custom API Access",
+          "SSO & Advanced Security",
+          "White-label Mobile App option",
+          "SLA Support"
+        ]
+      }
+    ]
+  },
+  "Footer": {
+    "tagline": "The modern loyalty infrastructure for Morocco's forward-thinking businesses.",
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "api": "API",
+      "changelog": "Changelog"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "security": "Security"
+    },
+    "copyright": "© 2025 Loylpass SARL. All rights reserved.",
+    "location": "Oujda, Morocco",
+    "status": "All Systems Operational"
+  },
+  "Login": {
+    "back": "Retour",
+    "title": "Connexion à Loylpass",
+    "subtitle": "Entrez vos identifiants pour accéder à l'espace de travail.",
+    "email_label": "E-mail",
+    "email_placeholder": "nom@entreprise.com",
+    "password_label": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "submit": "Se connecter",
+    "demo_title": "Identifiants de démo",
+    "no_account": "Vous n'avez pas de compte ?",
+    "register_link": "Créez-en un gratuitement",
+    "errors": {
+      "invalid": "E-mail ou mot de passe invalide.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "Register": {
+    "back": "Back",
+    "title": "Create your account",
+    "subtitle": "Get started with Loylpass today.",
+    "role_customer": "Customer",
+    "role_business": "Business",
+    "label_name": "Full Name",
+    "label_business_name": "Business Name",
+    "label_email": "Email",
+    "label_password": "Password",
+    "placeholder_name": "John Doe",
+    "placeholder_business": "Joe's Coffee Shop",
+    "submit_customer": "Join as Customer",
+    "submit_business": "Create Business Account",
+    "processing": "Processing...",
+    "already_have_account": "Already have an account?",
+    "sign_in": "Sign in",
+    "error_generic": "Something went wrong",
+    "error_network": "Failed to connect to server"
+  },
+
+  "CreateProgramModal": {
+    "trigger": "Create Program",
+    "title": "New Loyalty Program",
+    "description": "Configure rules for earning and redeeming points.",
+    "label_name": "Internal Name",
+    "placeholder_name": "e.g. Summer Coffee Club",
+    "label_type": "Type",
+    "placeholder_type": "Select type",
+    "types": {
+      "free_item": "Free Item",
+      "discount": "Discount",
+      "custom": "Custom"
+    },
+    "label_reward": "Reward",
+    "label_value_percent": "Value (%)",
+    "placeholder_reward": "Free Latte",
+    "label_threshold": "Threshold",
+    "threshold_prefix": "POINTS_REQ:",
+    "advanced_toggle": "Advanced Logic",
+    "label_multiplier": "Currency Multiplier",
+    "multiplier_suffix": "pts/unit",
+    "multiplier_help": "E.g. '10' means 100 MAD spent = 1000 points.",
+    "submit": "Create Program",
+    "submitting": "Creating...",
+    "error": "Failed to create program",
+    "discount_suffix": "% OFF"
+  },
+
+  "DashboardShell": {
+    "roles": {
+      "BUSINESS": "Management",
+      "WAITER": "Staff Zone",
+      "ADMIN": "Admin Panel",
+      "CLIENT": "Membership"
+    },
+    "titles": {
+      "BUSINESS": "Business Dashboard",
+      "WAITER": "Point of Sale",
+      "ADMIN": "System Admin",
+      "CLIENT": "My Wallet"
+    },
+    "nav": {
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "programs": "Programs",
+      "products": "Menu & Products",
+      "waiters": "Staff / Waiters",
+      "admin_overview": "System Overview",
+      "manage_businesses": "Manage Businesses",
+      "global_settings": "Global Settings",
+      "pos": "POS Terminal",
+      "history": "History",
+      "wallet": "My Wallet",
+      "scan": "Scan Code",
+      "rewards": "Rewards"
+    },
+    "ui": {
+      "dashboard": "Dashboard",
+      "workspace": "workspace",
+      "signOut": "Sign Out"
+    }
+  },
+  "BusinessDashboard": {
+    "loading": "Initializing Dashboard...",
+    "stats": {
+      "totalClients": "Total Clients",
+      "totalPoints": "Total Points",
+      "activePrograms": "Active Programs"
+    },
+    "charts": {
+      "activityTrend": "Activity Trend",
+      "activityTrendDesc": "Points redeemed (last 7 days)",
+      "hourlyActivity": "Hourly Activity",
+      "topWaiters": "Top Waiters"
+    },
+    "programs": {
+      "title": "Active Programs",
+      "empty": "No programs created yet.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "logic": "{threshold} pts = {value}"
+    }
+  },
+  "BusinessCharts": {
+    "hourly": {
+      "title": "Peak Hours",
+      "desc": "Transaction volume by time of day",
+      "unit": "sales"
+    },
+    "waiters": {
+      "title": "Top Staff",
+      "desc": "Revenue generated by waiters"
+    }
+  },
+  "BoostToggle": {
+    "title": "Happy Hour Boost",
+    "desc_on": "Active: 2x Points Multiplier",
+    "desc_off": "Off: Normal Points Rate",
+    "toast": {
+      "on_title": "🚀 Boost Activated!",
+      "on_desc": "Customers will now earn 2x points.",
+      "off_title": "Boost Deactivated",
+      "off_desc": "Points returned to normal rate.",
+      "error_title": "Error",
+      "error_desc": "Failed to update boost settings."
+    }
+  },
+  "TransactionsPage": {
+    "title": "Transaction History",
+    "subtitle": "Audit log of all points awarded by your staff.",
+    "recent_activity": "Recent Activity",
+    "showing_count": "Showing the last 50 transactions.",
+    "table": {
+      "date": "Date & Time",
+      "staff": "Staff Member",
+      "customer": "Customer",
+      "items": "Items",
+      "amount": "Amount",
+      "points": "Points"
+    },
+    "guest": "Guest",
+    "unknown": "Unknown",
+    "custom_amount": "Custom Amount",
+    "empty": "No transactions recorded yet."
+  },
+  "ProductsPage": {
+    "title": "Menu & Products",
+    "subtitle": "Manage items eligible for loyalty points.",
+    "add_button": "Add Product",
+    "standard_item": "Standard Item",
+    "reward_value": "Reward Value",
+    "empty": {
+      "title": "No products yet",
+      "desc": "Add your best sellers here to automatically calculate points."
+    },
+    "form": {
+      "title": "Add New Product",
+      "desc": "Add an item to your menu. Set the price and how many points it awards.",
+      "label_name": "Product Name",
+      "placeholder_name": "e.g. Cappuccino",
+      "label_price": "Price",
+      "label_points": "Points Awarded",
+      "submit": "Save Product",
+      "loading": "Saving..."
+    },
+    "toasts": {
+      "success_title": "Success",
+      "created_desc": "The item has been added to your menu.",
+      "deleted_desc": "Product removed successfully.",
+      "error_title": "Error",
+      "confirm_delete": "Are you sure you want to delete this product?"
+    }
+  },
+  "WaitersPage": {
+    "title": "Staff Management",
+    "subtitle": "Manage access for your waiters and POS operators.",
+    "form": {
+      "card_title": "Add New Staff",
+      "card_desc": "Create an account for POS access.",
+      "name_label": "Full Name",
+      "name_placeholder": "e.g. Alex Johnson",
+      "email_label": "Email Address",
+      "email_placeholder": "staff@restaurant.com",
+      "password_label": "Set Password",
+      "password_placeholder": "••••••••",
+      "password_help": "Minimum 6 characters. Must contain at least one number.",
+      "submit": "Create Account",
+      "submitting": "Creating..."
+    },
+    "list": {
+      "loading": "Loading staff list...",
+      "empty": "No waiters found.",
+      "unknown": "Unknown",
+      "active": "Active",
+      "added_label": "Added"
+    },
+    "alerts": {
+      "success": "Staff account created successfully.",
+      "error": "Failed to create waiter."
+    }
+  }
+}
