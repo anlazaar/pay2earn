@@ -5,8 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 enum Role {
@@ -30,27 +30,27 @@ enum RewardType {
 
 // 2.1 Users
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(cuid())
   role          Role      @default(CLIENT)
   username      String?   @unique
   email         String    @unique
   passwordHash  String
   createdAt     DateTime  @default(now())
-  
+
   // Relations
   businessOwned Business? @relation("OwnerBusiness")
-  
-  // For Waiters: Which business do they work for?
+
+  // For Waiters
   employerId    String?
   employer      Business? @relation("StaffBusiness", fields: [employerId], references: [id])
-  
+
   salesProcessed Purchase[]
-  clientProfile Client?
+  clientProfile  Client?
 }
 
 // 2.2 Business
 model Business {
-  id                 String   @id @default(uuid())
+  id                 String   @id @default(cuid())
   name               String
   tier               Tier     @default(BASIC)
   subscriptionStatus String   @default("active")
@@ -58,19 +58,19 @@ model Business {
 
   ownerId            String   @unique
   owner              User     @relation("OwnerBusiness", fields: [ownerId], references: [id])
-  
+
   staff              User[]   @relation("StaffBusiness")
   loyaltyPrograms    LoyaltyProgram[]
   products           Product[]
   purchases          Purchase[]
 
-  pointsMultiplier Float    @default(1.0)
+  pointsMultiplier   Float    @default(1.0)
   redemptions        RedemptionTicket[]
 }
 
 // 2.3 Loyalty Programs
 model LoyaltyProgram {
-  id                String   @id @default(uuid())
+  id                String   @id @default(cuid())
   name              String
   rewardType        RewardType
   rewardValue       String
@@ -82,91 +82,90 @@ model LoyaltyProgram {
 
   businessId        String
   business          Business @relation(fields: [businessId], references: [id])
-  clientProgress    ClientProgress[]
 
-  redemptions        RedemptionTicket[]
+  clientProgress    ClientProgress[]
+  redemptions       RedemptionTicket[]
 }
 
 // 2.4 Products
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  price       Decimal  @db.Decimal(10, 2)
-  points      Int?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  price      Decimal
+  points     Int?
+  createdAt  DateTime @default(now())
 
-  businessId  String
-  business    Business @relation(fields: [businessId], references: [id])
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
 }
 
 // 2.5 Clients
 model Client {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  createdAt  DateTime @default(now())
 
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
 
-  purchases Purchase[]
-  progress  ClientProgress[]
-
-  redemptions        RedemptionTicket[]
+  purchases  Purchase[]
+  progress   ClientProgress[]
+  redemptions RedemptionTicket[]
 }
 
 // 2.6 Purchases / QR Codes
 model Purchase {
-  id           String    @id @default(uuid())
-  qrCode       String    @unique
-  products     Json
-  totalAmount  Decimal   @db.Decimal(10, 2)
+  id            String    @id @default(cuid())
+  qrCode        String    @unique
+  products      Json
+  totalAmount   Decimal
   pointsAwarded Int
-  redeemed     Boolean   @default(false)
-  expiresAt    DateTime
-  createdAt    DateTime  @default(now())
+  redeemed      Boolean   @default(false)
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
 
-  businessId   String
-  business     Business  @relation(fields: [businessId], references: [id])
-  
-  waiterId     String
-  waiter       User      @relation(fields: [waiterId], references: [id])
-  
-  clientId     String?
-  client       Client?   @relation(fields: [clientId], references: [id])
+  businessId    String
+  business      Business  @relation(fields: [businessId], references: [id])
+
+  waiterId      String
+  waiter        User      @relation(fields: [waiterId], references: [id])
+
+  clientId      String?
+  client        Client?   @relation(fields: [clientId], references: [id])
 }
 
 // 2.7 Client Progress
 model ClientProgress {
-  id                String   @id @default(uuid())
+  id                String   @id @default(cuid())
   pointsAccumulated Int      @default(0)
-  rewardsRedeemed   Json     @default("[]") 
+  rewardsRedeemed   Json     @default("[]")
   lastUpdated       DateTime @default(now())
 
   clientId          String
   client            Client   @relation(fields: [clientId], references: [id])
-  
+
   programId         String
   program           LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@unique([clientId, programId])
 }
 
-
+// 2.8 Redemption Tickets
 model RedemptionTicket {
-  id        String   @id @default(uuid())
-  ticketId  String   @unique // Secure random string for the QR
-  used      Boolean  @default(false)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  ticketId   String   @unique
+  used       Boolean  @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
 
-  // Relations
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id])
+
   businessId String
   business   Business @relation(fields: [businessId], references: [id])
-  
-  programId String
-  program   LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  programId  String
+  program    LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
+  

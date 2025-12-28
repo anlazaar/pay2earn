@@ -1,12 +1,8 @@
 // prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import dotenv from "dotenv";
 
-// Load environment variables so Prisma can find the DB URL
-dotenv.config();
-
-const prisma = new PrismaClient(); // <--- Clean initialization
+const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Starting seed...");
@@ -15,10 +11,10 @@ async function main() {
 
   // 1. Create a Business Owner
   const businessOwner = await prisma.user.upsert({
-    where: { email: "owner@loyvo.com" },
+    where: { email: "owner@loyelpass.com" },
     update: {},
     create: {
-      email: "owner@loyvo.com",
+      email: "owner@loyelpass.com",
       username: "OwnerUser",
       passwordHash: password,
       role: "BUSINESS",
@@ -40,10 +36,10 @@ async function main() {
 
   if (business) {
     const waiter = await prisma.user.upsert({
-      where: { email: "waiter@loyvo.com" },
+      where: { email: "waiter@loyelpass.com" },
       update: {},
       create: {
-        email: "waiter@loyvo.com",
+        email: "waiter@loyelpass.com",
         username: "JohnWaiter",
         passwordHash: password,
         role: "WAITER",
@@ -55,17 +51,17 @@ async function main() {
 
   // 3. Create a Client
   const client = await prisma.user.upsert({
-    where: { email: "client@loyvo.com" },
+    where: { email: "client@loyelpass.com" },
     update: {},
     create: {
-      email: "client@loyvo.com",
+      email: "client@loyelpass.com",
       username: "AliceClient",
       passwordHash: password,
       role: "CLIENT",
       clientProfile: {
         create: {
           name: "Alice Client",
-          email: "client@loyvo.com",
+          email: "client@loyelpass.com",
         },
       },
     },
