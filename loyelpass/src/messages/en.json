@@ -379,5 +379,86 @@
       "success": "Staff account created successfully.",
       "error": "Failed to create waiter."
     }
+  },
+  "ClientDashboard": {
+    "unauthorized": "Unauthorized",
+    "hello_user": "Hello, {name}",
+    "active_rewards_text": "You have <bold>{count}</bold> active rewards.",
+    "universal_pass": "Universal Pass",
+    "scan_id": "Scan ID",
+    "tap_reveal": "Tap to reveal your unique QR code",
+    "open_scanner": "Open Scanner",
+    "ready_redeem": "Ready to Redeem",
+    "view_all": "View all",
+    "your_programs": "Your Programs",
+    "add_membership": "Add Membership"
+  },
+  "ScanPage": {
+    "active": "Scanner Active",
+    "verifying": "Verifying code...",
+    "success_title": "Success!",
+    "points_added": "+{points} Points Added",
+    "error_title": "Error",
+    "invalid_code": "Invalid QR Code",
+    "connection_failed": "Connection failed",
+    "try_again": "Try Again",
+    "cancel": "Cancel"
+  },
+  "WaiterDashboard": {
+    "header": {
+      "title": "Staff Terminal",
+      "subtitle": "Logged in as Waiter"
+    },
+    "tabs": {
+      "sale": "New Sale",
+      "scan": "Validate Reward"
+    },
+    "sale": {
+      "custom_amount": "Custom Amount",
+      "menu_items": "Menu Items",
+      "no_products": "No products found.",
+      "total_amount": "Total Amount",
+      "generate_btn": "Generate QR Code",
+      "currency": "MAD",
+      "add_custom": "Add Custom",
+      "checkout_btn": "Checkout",
+      "cart_empty": "Cart is empty"
+    },
+    "qr": {
+      "scan_prompt": "Scan to Collect",
+      "receipt_details": "Receipt Details",
+      "custom_item": "Custom Amount",
+      "new_sale_btn": "New Sale"
+    },
+    "scan": {
+      "success_client": "Client: {name}",
+      "invalid_title": "Invalid Ticket",
+      "next_btn": "Next",
+      "try_again": "Try Again",
+      "connection_error": "Connection failed"
+    },
+    "checkout": {
+      "title": "Payment & Change",
+      "total_due": "Total Due",
+      "cash_received": "Cash Received",
+      "change_due": "Change Due",
+      "exact_cash": "Exact Cash",
+      "generate_qr": "Generate QR",
+      "back_to_cart": "Back to Cart",
+      "insufficient": "Insufficient cash"
+    }
+  },
+  "WaiterHistory": {
+    "title": "History & Income",
+    "subtitle": "Track your daily performance.",
+    "back_btn": "Back to Terminal",
+    "daily_total_label": "Today's Revenue",
+    "transaction_history_label": "Recent Transactions",
+    "empty_history": "No transactions recorded yet.",
+    "col_time": "Time",
+    "col_amount": "Amount",
+    "col_points": "Pts",
+    "ticket_id": "Ticket #{id}",
+    "currency": "MAD"
   }
 }

@@ -377,5 +377,86 @@
       "success": "تم إنشاء حساب الموظف بنجاح.",
       "error": "فشل إنشاء حساب الموظف."
     }
+  },
+  "ClientDashboard": {
+    "unauthorized": "غير مصرح بالدخول",
+    "hello_user": "مرحبًا، {name}",
+    "active_rewards_text": "لديك <bold>{count}</bold> مكافآت نشطة.",
+    "universal_pass": "التذكرة الشاملة",
+    "scan_id": "رمز المعرف",
+    "tap_reveal": "اضغط لإظهار رمز QR الخاص بك",
+    "open_scanner": "فتح الماسح الضوئي",
+    "ready_redeem": "جاهز للاستخدام",
+    "view_all": "عرض الكل",
+    "your_programs": "برامجك",
+    "add_membership": "إضافة عضوية"
+  },
+  "ScanPage": {
+    "active": "الماسح نشط",
+    "verifying": "جاري التحقق...",
+    "success_title": "تم بنجاح!",
+    "points_added": "تم إضافة +{points} نقطة",
+    "error_title": "خطأ",
+    "invalid_code": "رمز QR غير صالح",
+    "connection_failed": "فشل الاتصال",
+    "try_again": "حاول مرة أخرى",
+    "cancel": "إلغاء"
+  },
+  "WaiterDashboard": {
+    "header": {
+      "title": "محطة الموظفين",
+      "subtitle": "مسجل كـ نادل"
+    },
+    "tabs": {
+      "sale": "بيع جديد",
+      "scan": "التحقق من المكافأة"
+    },
+    "sale": {
+      "custom_amount": "مبلغ مخصص",
+      "menu_items": "قائمة المنتجات",
+      "no_products": "لم يتم العثور على منتجات.",
+      "total_amount": "الإجمالي",
+      "generate_btn": "إنشاء رمز QR",
+      "currency": "د.م",
+      "add_custom": "إضافة سعر",
+      "checkout_btn": "دفع",
+      "cart_empty": "السلة فارغة"
+    },
+    "qr": {
+      "scan_prompt": "امسح للجمع",
+      "receipt_details": "تفاصيل الفاتورة",
+      "custom_item": "مبلغ مخصص",
+      "new_sale_btn": "بيع جديد"
+    },
+    "scan": {
+      "success_client": "العميل: {name}",
+      "invalid_title": "تذكرة غير صالحة",
+      "next_btn": "التالي",
+      "try_again": "حاول مرة أخرى",
+      "connection_error": "فشل الاتصال"
+    },
+    "checkout": {
+      "title": "الدفع والصرف",
+      "total_due": "المبلغ الإجمالي",
+      "cash_received": "المبلغ المستلم",
+      "change_due": "الباقي للعميل",
+      "exact_cash": "مبلغ دقيق",
+      "generate_qr": "إنشاء رمز QR",
+      "back_to_cart": "عودة للسلة",
+      "insufficient": "المبلغ غير كافٍ"
+    }
+  },
+  "WaiterHistory": {
+    "title": "السجل والأرباح",
+    "subtitle": "تتبع أدائك اليومي.",
+    "back_btn": "العودة للمحطة",
+    "daily_total_label": "إيرادات اليوم",
+    "transaction_history_label": "المعاملات الأخيرة",
+    "empty_history": "لم يتم تسجيل أي معاملات بعد.",
+    "col_time": "الوقت",
+    "col_amount": "المبلغ",
+    "col_points": "نقاط",
+    "ticket_id": "تذكرة #{id}",
+    "currency": "د.م"
   }
 }

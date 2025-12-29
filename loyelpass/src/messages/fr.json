@@ -378,5 +378,86 @@
       "success": "Compte personnel créé avec succès.",
       "error": "Échec de la création du serveur."
     }
+  },
+  "ClientDashboard": {
+    "unauthorized": "Accès non autorisé",
+    "hello_user": "Bonjour, {name}",
+    "active_rewards_text": "Vous avez <bold>{count}</bold> récompenses actives.",
+    "universal_pass": "Passe Universel",
+    "scan_id": "Scanner ID",
+    "tap_reveal": "Appuyez pour révéler votre code QR",
+    "open_scanner": "Ouvrir le scanner",
+    "ready_redeem": "Prêt à utiliser",
+    "view_all": "Voir tout",
+    "your_programs": "Vos Programmes",
+    "add_membership": "Ajouter une adhésion"
+  },
+  "ScanPage": {
+    "active": "Scanner Actif",
+    "verifying": "Vérification...",
+    "success_title": "Succès !",
+    "points_added": "+{points} Points Ajoutés",
+    "error_title": "Erreur",
+    "invalid_code": "Code QR Invalide",
+    "connection_failed": "Échec de connexion",
+    "try_again": "Réessayer",
+    "cancel": "Annuler"
+  },
+  "WaiterDashboard": {
+    "header": {
+      "title": "Terminal Staff",
+      "subtitle": "Connecté en tant que serveur"
+    },
+    "tabs": {
+      "sale": "Nouvelle Vente",
+      "scan": "Valider Récompense"
+    },
+    "sale": {
+      "custom_amount": "Montant Personnalisé",
+      "menu_items": "Menu",
+      "no_products": "Aucun produit trouvé.",
+      "total_amount": "Montant Total",
+      "generate_btn": "Générer Code QR",
+      "currency": "MAD",
+      "add_custom": "Ajouter Prix",
+      "checkout_btn": "Encaisser",
+      "cart_empty": "Panier vide"
+    },
+    "qr": {
+      "scan_prompt": "Scanner pour Collecter",
+      "receipt_details": "Détails du Reçu",
+      "custom_item": "Montant Personnalisé",
+      "new_sale_btn": "Nouvelle Vente"
+    },
+    "scan": {
+      "success_client": "Client : {name}",
+      "invalid_title": "Ticket Invalide",
+      "next_btn": "Suivant",
+      "try_again": "Réessayer",
+      "connection_error": "Échec de connexion"
+    },
+    "checkout": {
+      "title": "Paiement & Monnaie",
+      "total_due": "Total à Payer",
+      "cash_received": "Espèces Reçues",
+      "change_due": "Reste à Rendre",
+      "exact_cash": "Montant Exact",
+      "generate_qr": "Générer QR",
+      "back_to_cart": "Retour au Panier",
+      "insufficient": "Montant insuffisant"
+    }
+  },
+  "WaiterHistory": {
+    "title": "Historique & Revenus",
+    "subtitle": "Suivez vos performances quotidiennes.",
+    "back_btn": "Retour au Terminal",
+    "daily_total_label": "Recettes du Jour",
+    "transaction_history_label": "Transactions Récentes",
+    "empty_history": "Aucune transaction enregistrée.",
+    "col_time": "Heure",
+    "col_amount": "Montant",
+    "col_points": "Pts",
+    "ticket_id": "Ticket #{id}",
+    "currency": "MAD"
   }
 }
