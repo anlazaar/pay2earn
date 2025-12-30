@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { WaiterActions } from "@/components/WaiterActions";
 import { useFormatter, useTranslations } from "next-intl";
-import { toast } from "sonner"; // Assuming you have sonner installed based on previous files
+import { toast } from "sonner";
 
 export default function WaitersPage() {
   const t = useTranslations("WaitersPage");
@@ -73,7 +73,7 @@ export default function WaitersPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10 text-start">
       {/* 🟢 Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/50 pb-6">
         <div>
@@ -88,7 +88,7 @@ export default function WaitersPage() {
         {/* 🟢 Column 1: Create Form (4 cols) */}
         <div className="lg:col-span-5 xl:col-span-4">
           <Card className="border border-border/50 shadow-sm bg-card rounded-xl overflow-hidden">
-            <CardHeader className="pb-4 border-b border-border/50">
+            <CardHeader className="pb-4 border-b border-border/50 text-start">
               <CardTitle className="flex items-center gap-2 text-base font-semibold tracking-tight">
                 <div className="h-7 w-7 rounded bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                   <UserPlus className="h-4 w-4" />
@@ -101,7 +101,7 @@ export default function WaitersPage() {
             </CardHeader>
 
             <CardContent className="pt-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4 text-start">
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
@@ -110,11 +110,13 @@ export default function WaitersPage() {
                     {t("form.name_label")}
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    {/* Changed left-3 to start-3 for RTL support */}
+                    <User className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    {/* Changed pl-9 to ps-9 for RTL support */}
                     <Input
                       id="name"
                       required
-                      className="pl-9 h-10 bg-secondary/20"
+                      className="ps-9 h-10 bg-secondary/20 text-start"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -132,12 +134,12 @@ export default function WaitersPage() {
                     {t("form.email_label")}
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       required
                       type="email"
-                      className="pl-9 h-10 bg-secondary/20"
+                      className="ps-9 h-10 bg-secondary/20 text-start"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -155,12 +157,12 @@ export default function WaitersPage() {
                     {t("form.password_label")}
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       required
                       type="password"
-                      className="pl-9 h-10 bg-secondary/20"
+                      className="ps-9 h-10 bg-secondary/20 text-start"
                       value={formData.password}
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
@@ -180,7 +182,8 @@ export default function WaitersPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {/* Changed mr-2 to me-2 for RTL */}
+                      <Loader2 className="me-2 h-4 w-4 animate-spin rtl:ml-2" />
                       {t("form.submitting")}
                     </>
                   ) : (
@@ -220,7 +223,7 @@ export default function WaitersPage() {
                           {waiter.username?.[0]?.toUpperCase() || "U"}
                         </div>
 
-                        <div>
+                        <div className="text-start">
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-sm text-foreground">
                               {waiter.username || t("list.unknown")}
@@ -237,7 +240,7 @@ export default function WaitersPage() {
                       </div>
 
                       <div className="flex items-center gap-6">
-                        <div className="text-right hidden sm:block">
+                        <div className="text-end hidden sm:block">
                           <p className="text-[10px] uppercase text-muted-foreground tracking-wider mb-0.5">
                             {t("list.added_label")}
                           </p>

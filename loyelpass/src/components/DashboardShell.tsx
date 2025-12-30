@@ -182,7 +182,7 @@ export function DashboardShell({
             </div>
           </div>
 
-          <Link href="../api/auth/signout" className="block">
+          <a href="/api/auth/signout" className="block">
             <Button
               variant="outline"
               size="sm"
@@ -191,7 +191,7 @@ export function DashboardShell({
               <LogOut className="h-3 w-3 rtl:rotate-180" />
               {t("ui.signOut")}
             </Button>
-          </Link>
+          </a>
         </div>
       </aside>
 

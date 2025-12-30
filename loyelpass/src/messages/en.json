@@ -311,6 +311,7 @@
     "subtitle": "Audit log of all points awarded by your staff.",
     "recent_activity": "Recent Activity",
     "showing_count": "Showing the last 50 transactions.",
+    "more_items": "+{count} more",
     "table": {
       "date": "Date & Time",
       "staff": "Staff Member",

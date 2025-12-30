@@ -310,6 +310,7 @@
     "subtitle": "Journal d'audit de tous les points attribués par votre personnel.",
     "recent_activity": "Activité Récente",
     "showing_count": "Affichage des 50 dernières transactions.",
+    "more_items": "+{count} autres",
     "table": {
       "date": "Date et Heure",
       "staff": "Membre du personnel",
