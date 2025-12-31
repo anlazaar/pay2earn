@@ -7,6 +7,23 @@
     "login": "Log in",
     "register": "Start for free"
   },
+  "BusinessImpact": {
+    "retention": {
+      "tag": "Loyalty Loop",
+      "title": "Turn Visitors into Regulars",
+      "description": "Don't let customers walk away. Create addictive loyalty loops that bring them back 3x more often with automated rewards."
+    },
+    "analytics": {
+      "tag": "Real-time Data",
+      "title": "Data That Drives Revenue",
+      "description": "Stop guessing. See exactly who your best customers are, what they buy, and how to increase their lifetime value."
+    },
+    "automation": {
+      "tag": "Smart Workflows",
+      "title": "Set It and Forget It",
+      "description": "Automate rewards, birthday gifts, and re-engagement campaigns so you can focus on running your business, not your software."
+    }
+  },
   "Hero": {
     "badge": "QR Analytics 2.0 is live",
     "badge_new": "New",

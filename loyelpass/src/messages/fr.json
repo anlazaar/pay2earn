@@ -17,6 +17,23 @@
     "cta_secondary": "Voir la démo",
     "trusted_by": "Recommandé par les équipes retail modernes"
   },
+  "BusinessImpact": {
+    "retention": {
+      "tag": "Boucle de fidélité",
+      "title": "Transformez les visiteurs en clients fidèles",
+      "description": "Ne laissez pas vos clients partir. Créez des boucles de fidélité engageantes qui les font revenir 3 fois plus souvent grâce à des récompenses automatisées."
+    },
+    "analytics": {
+      "tag": "Données en temps réel",
+      "title": "Des données qui génèrent du revenu",
+      "description": "Arrêtez de deviner. Identifiez précisément vos meilleurs clients, ce qu’ils achètent et comment augmenter leur valeur à long terme."
+    },
+    "automation": {
+      "tag": "Workflows intelligents",
+      "title": "Configurez une fois, laissez faire",
+      "description": "Automatisez les récompenses, les cadeaux d’anniversaire et les campagnes de réactivation pour vous concentrer sur votre business, pas sur le logiciel."
+    }
+  },  
   "ProductShowcase": {
     "title_start": "De la Table au Tableau de Bord,",
     "title_gradient": "Instantanément.",
