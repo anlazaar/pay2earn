@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Loader2, ArrowLeft, Layers, Store, User } from "lucide-react";
+import { Loader2, ArrowLeft, Layers, Store, User, Cake } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function RegisterPageClient() {
@@ -20,6 +20,7 @@ export default function RegisterPageClient() {
     businessName: "",
     email: "",
     password: "",
+    birthday: "", // New Field
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -134,6 +135,7 @@ export default function RegisterPageClient() {
             </div>
 
             <AnimatePresence initial={false}>
+              {/* Business Name Field */}
               {role === "BUSINESS" && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
@@ -156,6 +158,35 @@ export default function RegisterPageClient() {
                     disabled={isLoading}
                     className="h-10 bg-secondary/30 border-border"
                   />
+                </motion.div>
+              )}
+
+              {/* NEW: Birthday Field (Clients Only) */}
+              {role === "CLIENT" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2 overflow-hidden"
+                >
+                  <Label
+                    htmlFor="birthday"
+                    className="text-xs font-medium uppercase tracking-wider text-muted-foreground flex items-center justify-between"
+                  >
+                    <span>{t("label_birthday")}</span>
+                    <Cake className="w-3 h-3 text-pink-500" />
+                  </Label>
+                  <Input
+                    id="birthday"
+                    type="date"
+                    value={formData.birthday}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className="h-10 bg-secondary/30 border-border"
+                  />
+                  <p className="text-[10px] text-muted-foreground/80">
+                    {t("birthday_help")}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>

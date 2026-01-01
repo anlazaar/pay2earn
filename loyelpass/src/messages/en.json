@@ -243,7 +243,9 @@
     "already_have_account": "Already have an account?",
     "sign_in": "Sign in",
     "error_generic": "Something went wrong",
-    "error_network": "Failed to connect to server"
+    "error_network": "Failed to connect to server",
+    "label_birthday": "Birthday (Optional)",
+    "birthday_help": "Get exclusive rewards on your special day."
   },
 
   "CreateProgramModal": {
@@ -362,6 +364,7 @@
       "error": "Something went wrong"
     }
   },
+  
   "BusinessDashboard": {
     "loading": "Initializing Dashboard...",
     "stats": {
@@ -381,6 +384,16 @@
       "active": "Active",
       "inactive": "Inactive",
       "logic": "{threshold} pts = {value}"
+    },
+    "birthday": {
+      "title": "Birthday Bonus",
+      "description": "Auto-reward points on client birthdays.",
+      "points_label": "Points Amount",
+      "active_message": "Clients will automatically receive these points at 9:00 AM on their birthday.",
+      "disabled_message": "Set to 0 to disable birthday rewards.",
+      "success_title": "Saved",
+      "success_desc": "Birthday reward set to {points} points.",
+      "error_title": "Failed to save settings."
     }
   },
   "BusinessCharts": {

@@ -7,7 +7,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CreateProgramModal } from "@/components/CreateProgramModal";
 import { OverviewChart } from "@/components/OverviewChart";
 import {
@@ -19,6 +18,7 @@ import { BoostToggle } from "./BoostToggle";
 import { ProgramActions } from "@/components/ProgramActions";
 import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { BirthdayConfig } from "@/components/BirthdayConfig";
 
 // --- HELPERS ---
 function getLast7Days() {
@@ -35,7 +35,12 @@ function getLast7Days() {
 async function getDashboardData(userId: string, locale: string) {
   const business = await prisma.business.findUnique({
     where: { ownerId: userId },
-    select: { id: true, name: true, pointsMultiplier: true },
+    select: {
+      id: true,
+      name: true,
+      pointsMultiplier: true,
+      birthdayRewardPoints: true,
+    },
   });
 
   if (!business) return null;
@@ -143,6 +148,7 @@ async function getDashboardData(userId: string, locale: string) {
     hourlyData,
     waiterData,
     multiplier: business.pointsMultiplier || 1.0,
+    birthdayPoints: business.birthdayRewardPoints || 0,
   };
 }
 
@@ -244,7 +250,7 @@ export default async function BusinessDashboard() {
         <div className="space-y-6">
           {/* Boost Toggle */}
           <BoostToggle initialMultiplier={data.multiplier} />
-
+          <BirthdayConfig initialPoints={data.birthdayPoints} />
           {/* Programs List */}
           <Card className="border border-zinc-200/50 dark:border-white/10 shadow-lg bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl rounded-2xl overflow-hidden h-fit">
             <CardHeader className="pb-3 border-b border-zinc-100 dark:border-white/5 pt-5 px-5 text-start">

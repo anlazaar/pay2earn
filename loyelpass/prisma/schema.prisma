@@ -65,6 +65,8 @@ model Business {
   purchases          Purchase[]
 
   pointsMultiplier   Float    @default(1.0)
+  birthdayRewardPoints Int    @default(0) 
+
   redemptions        RedemptionTicket[]
 }
 
@@ -104,6 +106,7 @@ model Client {
   id         String   @id @default(cuid())
   name       String
   email      String   @unique
+  birthday           DateTime? 
   createdAt  DateTime @default(now())
 
   userId     String   @unique

@@ -6,9 +6,10 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role, businessName } = await req.json();
+    const { name, email, password, role, businessName, birthday } =
+      await req.json();
 
-    // 1. Basic Validation
+
     if (!email || !password || !name || !role) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -16,7 +17,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Check if user exists (email must be unique across system)
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -28,12 +28,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // 4. Transaction: Create User + (Business OR Client Profile)
     await prisma.$transaction(async (tx) => {
-      // A. Create the base User record
       const user = await tx.user.create({
         data: {
           username: name,
@@ -56,11 +53,22 @@ export async function POST(req: Request) {
           },
         });
       } else if (role === "CLIENT") {
+        // Parse birthday if it exists
+        let birthdayDate: Date | undefined;
+        if (birthday) {
+          birthdayDate = new Date(birthday);
+          // Simple check to ensure date is valid
+          if (isNaN(birthdayDate.getTime())) {
+            birthdayDate = undefined;
+          }
+        }
+
         await tx.client.create({
           data: {
             name: name,
             email: email,
             userId: user.id,
+            birthday: birthdayDate,
           },
         });
       }
@@ -69,7 +77,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Account created successfully" });
   } catch (error: any) {
     console.error("Registration Error:", error);
-    // Return specific error message if available
     const msg =
       error.message === "Business name is required"
         ? "Business name is required"
