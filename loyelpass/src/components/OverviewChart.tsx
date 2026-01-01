@@ -11,11 +11,18 @@ import {
   TooltipProps,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface Props {
   data: { date: string; displayDate: string; points: number }[];
   className?: string;
 }
+
+// 1. A Helper to make axis numbers look pro (e.g., 1500 -> 1.5k)
+const formatNumber = (num: number) => {
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
+  return num.toString();
+};
 
 const CustomTooltip = ({
   active,
@@ -24,16 +31,27 @@ const CustomTooltip = ({
 }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-lg border border-border bg-popover/95 backdrop-blur shadow-xl px-3 py-2 text-xs">
-        <p className="text-muted-foreground mb-1 uppercase tracking-wider font-semibold text-[10px]">
+      // 2. Glassmorphism Tooltip
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl p-3 min-w-[140px] animate-in zoom-in-95 duration-200">
+        <p className="text-muted-foreground mb-2 text-[10px] uppercase tracking-widest font-bold">
           {label}
         </p>
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-          <span className="font-mono font-medium text-foreground text-sm">
-            {payload[0].value?.toLocaleString()}
-          </span>
-          <span className="text-muted-foreground">pts</span>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </div>
+            <span className="text-xs font-medium text-muted-foreground">
+              Issued
+            </span>
+          </div>
+          <div className="text-right">
+            <span className="block font-mono text-lg font-bold text-foreground leading-none">
+              {payload[0].value?.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-muted-foreground">pts</span>
+          </div>
         </div>
       </div>
     );
@@ -43,69 +61,90 @@ const CustomTooltip = ({
 
 export function OverviewChart({ data, className }: Props) {
   return (
-    // 🟢 FIX: Add 'min-w-0' to prevent grid collapse issues
-    <div className={cn("w-full h-[300px] min-w-0", className)}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={cn("w-full h-[300px] min-w-0 select-none", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
         >
+          {/* 3. Rich Gradient Definition */}
           <defs>
             <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.25} />
+              <stop
+                offset="50%"
+                stopColor="var(--primary)"
+                stopOpacity={0.05}
+              />
               <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
             </linearGradient>
           </defs>
 
+          {/* 4. Subtle Grid */}
           <CartesianGrid
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
             vertical={false}
             stroke="var(--border)"
-            strokeOpacity={0.4}
+            strokeOpacity={0.3}
           />
 
           <XAxis
             dataKey="displayDate"
             axisLine={false}
             tickLine={false}
-            tickMargin={10}
+            tickMargin={12}
             minTickGap={30}
-            style={{ fontSize: 10, fontWeight: 500 }}
+            style={{ fontSize: 11, fontWeight: 500 }}
             tick={{ fill: "var(--muted-foreground)" }}
+            dy={5}
           />
 
           <YAxis
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => `${value}`}
-            style={{ fontSize: 10, fontFamily: "monospace" }}
+            tickFormatter={formatNumber}
+            tickMargin={10}
+            style={{ fontSize: 11, fontFamily: "var(--font-mono)" }}
             tick={{ fill: "var(--muted-foreground)" }}
           />
 
           <Tooltip
             content={<CustomTooltip />}
             cursor={{
-              stroke: "var(--border)",
+              stroke: "var(--primary)",
               strokeWidth: 1,
               strokeDasharray: "4 4",
+              strokeOpacity: 0.5,
             }}
+            isAnimationActive={true} // Smooth tooltip movement
           />
 
           <Area
             type="monotone"
             dataKey="points"
             stroke="var(--primary)"
-            strokeWidth={2}
+            strokeWidth={3}
             fill="url(#colorPoints)"
-            animationDuration={1000}
+            animationDuration={1500}
+            animationEasing="ease-out"
+            // 5. "Hollow" Active Dot (Premium feel)
             activeDot={{
-              r: 4,
-              strokeWidth: 0,
-              fill: "var(--primary)",
+              r: 6,
+              style: {
+                fill: "var(--background)",
+                stroke: "var(--primary)",
+                strokeWidth: 3,
+                boxShadow: "0 0 10px var(--primary)",
+              },
             }}
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </motion.div>
   );
 }

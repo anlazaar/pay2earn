@@ -152,6 +152,36 @@
       }
     ]
   },
+  "Testimonials": {
+    "title": "Trusted by 20+ Businesses",
+    "subtitle": "Join hundreds of cafes, restaurants, and retail stores growing with Loylpass.",
+    "customer_1": "Since switching to Loylpass, our return rate has jumped by 40%. The customers love scanning the QR code.",
+    "customer_2": "The simplest loyalty system we've ever used. Staff training took 5 minutes.",
+    "customer_3": "I love the automated birthday rewards. It brings people back on special days.",
+    "customer_4": "The analytics helped us understand our peak hours and best customers."
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about setting up your loyalty program.",
+    "q1": "Do I need special hardware?",
+    "a1": "No! Loylpass works on any smartphone or tablet. Your customers just scan a QR code.",
+    "q2": "Can I customize the rewards?",
+    "a2": "Absolutely. You can set points per dollar, specific items, or visit-based rewards.",
+    "q3": "Is there a free trial?",
+    "a3": "Yes, we offer a 14-day free trial on all plans. No credit card required.",
+    "q4": "Does it work for multiple locations?",
+    "a4": "Yes, the Business plan supports multi-location sync and unified customer data.",
+    "q5": "How do I train my staff?",
+    "a5": "The staff interface is incredibly simple. We provide a 2-minute video tutorial that covers everything."
+  },
+  "CTA": {
+    "badge": "Start Growing Today",
+    "title": "Ready to turn visitors into regulars?",
+    "subtitle": "Join the loyalty platform designed for modern businesses. Setup takes less than 5 minutes.",
+    "btn_primary": "Get Started Free",
+    "btn_secondary": "Talk to Sales",
+    "footer_note": "No credit card required • Cancel anytime"
+  },
   "Footer": {
     "tagline": "The modern loyalty infrastructure for Morocco's forward-thinking businesses.",
     "product": {
@@ -243,6 +273,18 @@
     "error": "Failed to create program",
     "discount_suffix": "% OFF"
   },
+  "CustomersPage": {
+    "title": "Customer Insights",
+    "subtitle": "Analyze your most loyal clients and their spending habits.",
+    "search_placeholder": "Search name or email...",
+    "stats": {
+      "spent": "Total Spent",
+      "points": "Points Balance",
+      "visits": "visits",
+      "last_seen": "Last seen",
+      "never": "Never"
+    }
+  },
 
   "DashboardShell": {
     "roles": {
@@ -270,12 +312,54 @@
       "history": "History",
       "wallet": "My Wallet",
       "scan": "Scan Code",
-      "rewards": "Rewards"
+      "rewards": "Rewards",
+      "customers": "Customers"
     },
     "ui": {
       "dashboard": "Dashboard",
-      "workspace": "workspace",
-      "signOut": "Sign Out"
+      "workspace": "Workspace",
+      "signOut": "Sign Out",
+      "account": "Account Settings",
+      "support": "Support"
+    },
+    "command": {
+      "placeholder": "Type a command or search...",
+      "no_results": "No results found.",
+      "navigation": "Navigation",
+      "actions": "Actions",
+      "light_mode": "Switch to Light Mode",
+      "dark_mode": "Switch to Dark Mode"
+    }
+  },
+  "ProgramActions": {
+    "menu": {
+      "edit": "Edit Program",
+      "delete": "Delete"
+    },
+    "edit": {
+      "title": "Edit Loyalty Program",
+      "desc": "Modify the rewards and requirements for this tier."
+    },
+    "form": {
+      "label_name": "Program Name",
+      "label_points": "Points Needed",
+      "label_reward": "Reward Value",
+      "label_active": "Program Status",
+      "status_on": "Customers can earn/redeem",
+      "status_off": "Paused (Hidden from customers)",
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "delete": {
+      "title": "Delete Program?",
+      "desc": "This action implies deleting data forever. If clients have points in this program, it might affect their balance.",
+      "cancel": "Keep it",
+      "confirm": "Delete Forever"
+    },
+    "toasts": {
+      "update_success": "Program updated successfully",
+      "delete_success": "Program deleted",
+      "error": "Something went wrong"
     }
   },
   "BusinessDashboard": {
@@ -368,6 +452,9 @@
       "deleted_desc": "Product removed successfully.",
       "error_title": "Error",
       "confirm_delete": "Are you sure you want to delete this product?"
+    },
+    "actions": {
+      "delete": "Delete"
     }
   },
   "WaitersPage": {
@@ -389,6 +476,7 @@
     "list": {
       "loading": "Loading staff list...",
       "empty": "No waiters found.",
+      "members": "members",
       "unknown": "Unknown",
       "active": "Active",
       "added_label": "Added"

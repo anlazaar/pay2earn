@@ -40,6 +40,11 @@ export default async function DashboardLayout({
       iconKey: "LayoutDashboard",
     },
     {
+      name: t("nav.customers"),
+      href: "/business/customers",
+      iconKey: "Goal",
+    },
+    {
       name: t("nav.transactions"),
       href: "/business/transactions",
       iconKey: "History",

@@ -33,7 +33,7 @@
       "title": "Configurez une fois, laissez faire",
       "description": "Automatisez les récompenses, les cadeaux d’anniversaire et les campagnes de réactivation pour vous concentrer sur votre business, pas sur le logiciel."
     }
-  },  
+  },
   "ProductShowcase": {
     "title_start": "De la Table au Tableau de Bord,",
     "title_gradient": "Instantanément.",
@@ -367,6 +367,9 @@
       "deleted_desc": "Produit supprimé avec succès.",
       "error_title": "Erreur",
       "confirm_delete": "Êtes-vous sûr de vouloir supprimer ce produit ?"
+    },
+    "actions": {
+      "delete": "Supprimé"
     }
   },
   "WaitersPage": {

@@ -6,6 +6,9 @@ import { Pricing } from "@/components/Landing/Pricing";
 import { Footer } from "@/components/Landing/Footer";
 import { setRequestLocale } from "next-intl/server";
 import { BusinessImpact } from "@/components/Landing/BusinessImpact";
+import { Testimonials } from "@/components/Landing/Testimonials";
+import { CallToAction } from "@/components/Landing/CallToAction";
+import { FAQ } from "@/components/Landing/FAQ";
 
 export default async function Home({
   params,
@@ -27,7 +30,10 @@ export default async function Home({
         <ProductShowcase />
         <BusinessImpact />
         <FeaturesGrid />
+        <Testimonials />
         <Pricing />
+        <FAQ />
+        <CallToAction />
         <Footer />
       </main>
     </div>

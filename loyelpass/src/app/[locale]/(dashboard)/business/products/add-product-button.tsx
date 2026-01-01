@@ -28,26 +28,23 @@ export function AddProductButton() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
-
     const formData = new FormData(event.currentTarget);
 
     try {
       const result = await createProduct(formData);
-
       if (result.success) {
         setOpen(false);
         toast.success(t("toasts.success_title"), {
           description: t("toasts.created_desc"),
         });
-        // Refresh the Server Component to show the new product
         router.refresh();
       } else {
         toast.error(t("toasts.error_title"), {
-          description: result.error || "Something went wrong.",
+          description: result.error || "Error",
         });
       }
-    } catch (error) {
-      toast.error(t("toasts.error_title"), { description: "Network error" });
+    } catch {
+      toast.error(t("toasts.error_title"));
     } finally {
       setIsLoading(false);
     }
@@ -56,41 +53,57 @@ export function AddProductButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 shadow-sm hover:shadow-md transition-all">
-          <Plus className="h-4 w-4" />
+        <Button className="gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all rounded-full px-6 h-11 bg-primary text-primary-foreground font-semibold">
+          <Plus className="h-4 w-4 stroke-[3]" />
           <span>{t("add_button")}</span>
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-425px text-start">
-        <DialogHeader className="text-start">
-          <DialogTitle>{t("form.title")}</DialogTitle>
-          <DialogDescription>{t("form.desc")}</DialogDescription>
+      <DialogContent className="sm:max-w-md text-start p-6 rounded-2xl">
+        <DialogHeader className="text-start space-y-3">
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <Package className="h-5 w-5" />
+          </div>
+          <div>
+            <DialogTitle className="text-xl font-bold">
+              {t("form.title")}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-1">
+              {t("form.desc")}
+            </DialogDescription>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="grid gap-5 py-4">
-          {/* Name Input */}
+        <form onSubmit={handleSubmit} className="grid gap-6 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">{t("form.label_name")}</Label>
+            <Label
+              htmlFor="name"
+              className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+            >
+              {t("form.label_name")}
+            </Label>
             <div className="relative">
-              {/* Icon positioned at start (left in EN, right in AR) */}
-              <Package className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Package className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground/50" />
               <Input
                 id="name"
                 name="name"
                 placeholder={t("form.placeholder_name")}
                 required
-                className="ps-9" // Padding start ensures text doesn't overlap icon
+                className="ps-10 h-11 rounded-lg bg-secondary/20 border-border/50 focus:bg-background transition-all"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {/* Price Input */}
             <div className="grid gap-2">
-              <Label htmlFor="price">{t("form.label_price")}</Label>
+              <Label
+                htmlFor="price"
+                className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+              >
+                {t("form.label_price")}
+              </Label>
               <div className="relative">
-                <span className="absolute start-3 top-2.5 text-xs font-bold text-muted-foreground">
+                <span className="absolute start-3 top-3 text-xs font-bold text-muted-foreground/70">
                   MAD
                 </span>
                 <Input
@@ -101,33 +114,37 @@ export function AddProductButton() {
                   min="0"
                   placeholder="0.00"
                   required
-                  className="ps-11" // Extra padding for "MAD" text
+                  className="ps-12 h-11 rounded-lg bg-secondary/20 border-border/50 focus:bg-background transition-all font-mono"
                 />
               </div>
             </div>
 
-            {/* Points Input */}
             <div className="grid gap-2">
-              <Label htmlFor="points">{t("form.label_points")}</Label>
+              <Label
+                htmlFor="points"
+                className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+              >
+                {t("form.label_points")}
+              </Label>
               <div className="relative">
-                <Coins className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Coins className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground/50" />
                 <Input
                   id="points"
                   name="points"
                   type="number"
                   min="0"
                   placeholder="10"
-                  className="ps-9"
+                  className="ps-10 h-11 rounded-lg bg-secondary/20 border-border/50 focus:bg-background transition-all font-mono"
                 />
               </div>
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="mt-2">
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto rounded-full h-11 px-8 font-semibold"
             >
               {isLoading && (
                 <Loader2 className="me-2 h-4 w-4 animate-spin rtl:ml-2" />
