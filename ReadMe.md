@@ -4,8 +4,13 @@
 
 Loylpass is a premium, full-stack SaaS platform designed to bridge the gap between businesses and their customers through seamless, QR-based loyalty programs. Built with performance, security, and aesthetics in mind, it features a glassmorphism-inspired UI and a robust event-driven architecture.
 
-![Loylpass Dashboard Preview](919shots_so.png)
-![Loylpass Phone Interface Preview](929shots_so.png)
+## LoyelPass Screenshots
+
+|                                |                                |                                |
+| ------------------------------ | ------------------------------ | ------------------------------ |
+| ![145](public/145shots_so.png) | ![193](public/193shots_so.png) | ![572](public/572shots_so.png) |
+| ![586](public/586shots_so.png) | ![594](public/594shots_so.png) | ![896](public/896shots_so.png) |
+| ![919](public/919shots_so.png) | ![929](public/929shots_so.png) |                                |
 
 ## ✨ Key Features
 
@@ -164,5 +169,3 @@ Loylpass distinguishes itself with a **"Premium Glass"** aesthetic:
 - **Gold & Dark:** A distinct color palette focusing on high-contrast dark modes with gold/amber accents for ranking and rewards.
 
 ---
-
-
