@@ -172,3 +172,10 @@ model RedemptionTicket {
   program    LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
   
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String   // "INFO", "SUCCESS", "WARN", "ERROR"
+  message   String
+  createdAt DateTime @default(now())
+}

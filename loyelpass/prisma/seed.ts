@@ -9,6 +9,18 @@ async function main() {
 
   const password = await bcrypt.hash("password123", 10);
 
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@loyelpass.com" },
+    update: {},
+    create: {
+      email: "admin@loyelpass.com",
+      username: "SuperAdmin",
+      passwordHash: password,
+      role: "ADMIN",
+    },
+  });
+  console.log("✅ Created Admin:", admin.email);
+
   // 1. Create a Business Owner
   const businessOwner = await prisma.user.upsert({
     where: { email: "owner@loyelpass.com" },

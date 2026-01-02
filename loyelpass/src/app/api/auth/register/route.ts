@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
     const { name, email, password, role, businessName, birthday } =
       await req.json();
-
 
     if (!email || !password || !name || !role) {
       return NextResponse.json(
@@ -22,6 +20,11 @@ export async function POST(req: Request) {
     });
 
     if (existingUser) {
+      // 🟡 LOG WARNING
+      await systemLog(
+        "WARN",
+        `Registration attempt with existing email: ${email}`
+      );
       return NextResponse.json(
         { error: "User already exists" },
         { status: 400 }
@@ -40,7 +43,6 @@ export async function POST(req: Request) {
         },
       });
 
-      // B. Handle Role Specific Logic
       if (role === "BUSINESS") {
         if (!businessName) throw new Error("Business name is required");
 
@@ -53,11 +55,9 @@ export async function POST(req: Request) {
           },
         });
       } else if (role === "CLIENT") {
-        // Parse birthday if it exists
         let birthdayDate: Date | undefined;
         if (birthday) {
           birthdayDate = new Date(birthday);
-          // Simple check to ensure date is valid
           if (isNaN(birthdayDate.getTime())) {
             birthdayDate = undefined;
           }
@@ -74,9 +74,21 @@ export async function POST(req: Request) {
       }
     });
 
+    // 🟢 LOG SUCCESS
+    void systemLog("SUCCESS", `New ${role} registered: ${name} (${email})`);
+
     return NextResponse.json({ message: "Account created successfully" });
   } catch (error: any) {
     console.error("Registration Error:", error);
+
+    // 🔴 LOG ERROR
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    void systemLog(
+      "ERROR",
+      `Registration failed for ${email || "unknown"}: ${errorMessage}`
+    );
+
     const msg =
       error.message === "Business name is required"
         ? "Business name is required"

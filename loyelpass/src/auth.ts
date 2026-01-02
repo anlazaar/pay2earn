@@ -1,12 +1,10 @@
-// auth.ts
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { authConfig } from "./auth.config";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
@@ -21,7 +19,11 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           where: { email: email as string },
         });
 
-        if (!user) return null;
+        // 🟡 LOG FAILED ATTEMPT (User not found)
+        if (!user) {
+          void systemLog("WARN", `Login failed: Email not found (${email})`);
+          return null;
+        }
 
         const passwordsMatch = await bcrypt.compare(
           password as string,
@@ -29,6 +31,12 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         );
 
         if (passwordsMatch) {
+          // 🔵 LOG SUCCESSFUL LOGIN
+          void systemLog(
+            "INFO",
+            `User logged in: ${user.username} (${user.role})`
+          );
+
           return {
             id: user.id,
             email: user.email,
@@ -36,6 +44,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
             name: user.username,
           };
         }
+
+        // 🟡 LOG FAILED ATTEMPT (Wrong password)
+        void systemLog("WARN", `Login failed: Invalid password for ${email}`);
         return null;
       },
     }),

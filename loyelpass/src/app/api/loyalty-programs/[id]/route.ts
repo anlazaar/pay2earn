@@ -1,9 +1,8 @@
-// app/api/loyalty-programs/[id]/route.ts
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma"; 
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger"; 
+import { Session } from "next-auth"; 
 
 // Helper: verify ownership
 async function verifyOwnership(userId: string, programId: string) {
@@ -28,13 +27,14 @@ export async function PATCH(
   req: Request,
   props: { params: Promise<{ id: string }> }
 ) {
+  let session: Session | null = null;
+
   try {
-    const session = await auth();
+    session = await auth();
     if (!session || session.user.role !== "BUSINESS") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ★ FIX: Await the params object before accessing id
     const params = await props.params;
     const programId = params.id;
 
@@ -46,7 +46,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Program not found" }, { status: 404 });
     }
 
-    // Build update object safely
     const updateData: any = {
       name: body.name,
       rewardValue: body.rewardValue,
@@ -65,9 +64,26 @@ export async function PATCH(
       data: updateData,
     });
 
+    // 🟢 LOG SUCCESS
+    void systemLog(
+      "INFO",
+      `Program updated: '${updatedProgram.name}' by ${session.user.email}`
+    );
+
     return NextResponse.json(updatedProgram);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating program:", error);
+
+    const userEmail = session?.user?.email || "Unknown User";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    // 🔴 LOG ERROR
+    void systemLog(
+      "ERROR",
+      `Failed to update program by ${userEmail}: ${errorMessage}`
+    );
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -75,18 +91,18 @@ export async function PATCH(
   }
 }
 
-// 2. DELETE: Remove a Program
 export async function DELETE(
   req: Request,
   props: { params: Promise<{ id: string }> }
 ) {
+  let session: Session | null = null;
+
   try {
-    const session = await auth();
+    session = await auth();
     if (!session || session.user.role !== "BUSINESS") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ★ FIX: Await the params object before accessing id
     const params = await props.params;
     const programId = params.id;
 
@@ -96,26 +112,41 @@ export async function DELETE(
       return NextResponse.json({ error: "Program not found" }, { status: 404 });
     }
 
-    // Execute Transaction
-    // We must use 'programId' variable which is now guaranteed to be a string
     await prisma.$transaction([
-      // 1. Delete Redemptions (field: programId)
+      // Delete Redemptions
       prisma.redemptionTicket.deleteMany({
         where: { programId: programId },
       }),
-      // 2. Delete Client Progress (field: programId)
+      // Delete Client Progress
       prisma.clientProgress.deleteMany({
         where: { programId: programId },
       }),
-      // 3. Delete Program (field: id)
+      // Delete Program
       prisma.loyaltyProgram.delete({
         where: { id: programId },
       }),
     ]);
 
+    // 🟢 LOG WARNING (Deletion is significant)
+    void systemLog(
+      "WARN",
+      `Program deleted: '${existingProgram.name}' (ID: ${programId}) by ${session.user.email}`
+    );
+
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting program:", error);
+
+    const userEmail = session?.user?.email || "Unknown User";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    // 🔴 LOG ERROR
+    void systemLog(
+      "ERROR",
+      `Failed to delete program by ${userEmail}: ${errorMessage}`
+    );
+
     return NextResponse.json(
       { error: "Failed to delete program." },
       { status: 500 }

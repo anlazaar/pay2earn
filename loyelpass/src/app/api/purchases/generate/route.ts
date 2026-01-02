@@ -1,42 +1,51 @@
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger";
+import { Session } from "next-auth";
 
 export async function POST(req: Request) {
-  const session = await auth();
-
-  if (!session || session.user.role !== "WAITER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  let session: Session | null = null;
 
   try {
+    session = await auth();
+
+    if (!session || session.user.role !== "WAITER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { amount, products } = await req.json();
 
-    // 1. Get Waiter Details (and their employer)
+    // Get Waiter Details
     const waiter = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { employer: true },
+      include: {
+        employer: {
+          select: {
+            id: true,
+            name: true,
+            pointsMultiplier: true,
+          },
+        },
+      },
     });
 
-    if (!waiter || !waiter.employerId) {
+    if (!waiter || !waiter.employerId || !waiter.employer) {
       return NextResponse.json(
         { error: "Configuration Error: No employer found" },
         { status: 400 }
       );
     }
 
-    // 2. Generate Unique Code
+    // Generate Unique Code
     const uniqueString = crypto.randomBytes(32).toString("hex");
 
-    // 3. Create Purchase Record (Pending state)
-    // Expiration: 10 minutes from now
+    // Create Purchase Record
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Calculate potential points (Simple logic: 1 point per $1 for now, or fetch program rules)
-    const pointsAwarded = Math.floor(amount);
+    const multiplier = waiter.employer.pointsMultiplier || 1.0;
+    const pointsAwarded = Math.floor(amount * multiplier);
 
     const purchase = await prisma.purchase.create({
       data: {
@@ -45,13 +54,18 @@ export async function POST(req: Request) {
         totalAmount: amount,
         pointsAwarded: pointsAwarded,
         products: products || [],
-        qrCode: uniqueString, // This is the secret token
+        qrCode: uniqueString,
         expiresAt: expiresAt,
         redeemed: false,
       },
     });
 
-    // Return the Purchase ID and the Secret Code to generate QR
+    // 🟢 LOG SUCCESS
+    void systemLog(
+      "INFO",
+      `QR Generated: ${amount} currency -> ${pointsAwarded} pts by ${waiter.username} at ${waiter.employer.name}`
+    );
+
     return NextResponse.json({
       qrData: JSON.stringify({
         pid: purchase.id,
@@ -59,8 +73,16 @@ export async function POST(req: Request) {
         bid: waiter.employerId,
       }),
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("QR Gen Error:", error);
+
+    const userEmail = session?.user?.email || "Unknown User";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    // 🔴 LOG ERROR
+    void systemLog("ERROR", `QR Gen failed for ${userEmail}: ${errorMessage}`);
+
     return NextResponse.json(
       { error: "Failed to generate QR" },
       { status: 500 }

@@ -153,7 +153,7 @@ async function getDashboardData(userId: string, locale: string) {
 }
 
 // --- MAIN COMPONENT ---
-export default async function BusinessDashboard() {
+export default async function BusinessDashboard() { 
   const locale = await getLocale();
   const t = await getTranslations("BusinessDashboard");
   const session = await auth();

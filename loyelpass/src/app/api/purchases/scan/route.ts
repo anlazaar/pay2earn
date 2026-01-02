@@ -1,21 +1,21 @@
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger";
+import { Session } from "next-auth";
 
 export async function POST(req: Request) {
-  const session = await auth();
-
-  // 1. Ensure User is a Client
-  if (!session || session.user.role !== "CLIENT") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  let session: Session | null = null;
 
   try {
+    session = await auth();
+
+    if (!session || !session.user || session.user.role !== "CLIENT") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { qrData } = await req.json();
 
-    // Parse the QR data (we stored it as JSON string: { pid, sec, bid })
     let parsedData;
     try {
       parsedData = JSON.parse(qrData);
@@ -25,29 +25,28 @@ export async function POST(req: Request) {
 
     const { pid, sec, bid } = parsedData;
 
-    // 2. Database Transaction
-    // We use a transaction to ensure points aren't added if the purchase update fails
     const result = await prisma.$transaction(async (tx) => {
-      // A. Find the purchase
       const purchase = await tx.purchase.findUnique({
         where: { id: pid },
+        include: { business: { select: { name: true } } },
       });
 
-      // B. Validation Checks
+      // Validation Checks
       if (!purchase) throw new Error("Purchase not found");
+      if (purchase.businessId !== bid)
+        throw new Error("QR Code does not belong to this business"); // 🟢 Security Check
       if (purchase.qrCode !== sec) throw new Error("Invalid QR Security Token");
       if (purchase.redeemed) throw new Error("QR Code already used");
       if (new Date() > purchase.expiresAt) throw new Error("QR Code expired");
 
-      // C. Get Client Profile
+      // Get Client Profile
       const client = await tx.client.findUnique({
-        where: { userId: session.user.id },
+        where: { userId: session!.user!.id },
       });
       if (!client) throw new Error("Client profile not found");
 
-      // D. Find Active Loyalty Program for this Business
-      // (For simplicity, we grab the first active 'by_amount' or 'flat' program of the business)
-      // In a complex app, you might select which program the points apply to.
+      // Find Active Loyalty Program for this Business
+      // We attach points to the first active program found. -> next would be the ability the have global points following the business and use them anyware || select which program to take points on
       const program = await tx.loyaltyProgram.findFirst({
         where: { businessId: bid, active: true },
       });
@@ -55,7 +54,7 @@ export async function POST(req: Request) {
       if (!program)
         throw new Error("No active loyalty program found for this business");
 
-      // E. Update or Create Client Progress
+      // Update or Create Client Progress
       await tx.clientProgress.upsert({
         where: {
           clientId_programId: {
@@ -74,7 +73,7 @@ export async function POST(req: Request) {
         },
       });
 
-      // F. Mark Purchase as Redeemed
+      // Mark Purchase as Redeemed & Link to Client
       await tx.purchase.update({
         where: { id: pid },
         data: {
@@ -83,8 +82,18 @@ export async function POST(req: Request) {
         },
       });
 
-      return { points: purchase.pointsAwarded, businessId: bid };
+      return {
+        points: purchase.pointsAwarded,
+        businessName: purchase.business.name,
+        clientName: client.name,
+      };
     });
+
+    // 🟢 LOG SUCCESS
+    void systemLog(
+      "SUCCESS",
+      `Points Added: ${result.clientName} earned ${result.points} pts at ${result.businessName}`
+    );
 
     return NextResponse.json({
       success: true,
@@ -92,8 +101,19 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     console.error("Scan Error:", error);
+
+    const userEmail = session?.user?.email || "Unknown User";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    // 🔴 LOG ERROR (Warn level, as user errors are common here)
+    void systemLog(
+      "WARN",
+      `Scan failed for user ${userEmail}: ${errorMessage}`
+    );
+
     return NextResponse.json(
-      { error: error.message || "Scan failed" },
+      { error: errorMessage || "Scan failed" },
       { status: 400 }
     );
   }

@@ -1,12 +1,10 @@
-// app/api/waiters/[id]/route.ts
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma"; 
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { systemLog } from "@/lib/logger"; 
+import { Session } from "next-auth"; 
 
-const prisma = new PrismaClient();
-
-// Helper: Ensure the logged-in business owns this waiter
 async function verifyOwnership(businessOwnerId: string, waiterId: string) {
   const business = await prisma.business.findUnique({
     where: { ownerId: businessOwnerId },
@@ -17,7 +15,7 @@ async function verifyOwnership(businessOwnerId: string, waiterId: string) {
   const waiter = await prisma.user.findFirst({
     where: {
       id: waiterId,
-      employerId: business.id, // Must be employed by this business
+      employerId: business.id,
       role: "WAITER",
     },
   });
@@ -25,19 +23,21 @@ async function verifyOwnership(businessOwnerId: string, waiterId: string) {
   return waiter;
 }
 
-// 1. PATCH: Update Waiter Details
 export async function PATCH(
   req: Request,
   props: { params: Promise<{ id: string }> }
 ) {
+  let session: Session | null = null;
+  let waiterId = ""; 
+
   try {
-    const session = await auth();
+    session = await auth();
     if (!session || session.user.role !== "BUSINESS") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const params = await props.params;
-    const waiterId = params.id;
+    waiterId = params.id;
 
     const existingWaiter = await verifyOwnership(session.user.id, waiterId);
     if (!existingWaiter) {
@@ -55,7 +55,6 @@ export async function PATCH(
       email: email,
     };
 
-    // Only hash and update password if provided
     if (password && password.length >= 6) {
       updateData.passwordHash = await bcrypt.hash(password, 10);
     }
@@ -65,7 +64,11 @@ export async function PATCH(
       data: updateData,
     });
 
-    // Return safe data (no password hash)
+    void systemLog(
+      "INFO",
+      `Staff details updated: '${updatedWaiter.username}' by ${session.user.email}`
+    );
+
     return NextResponse.json({
       id: updatedWaiter.id,
       username: updatedWaiter.username,
@@ -73,12 +76,23 @@ export async function PATCH(
     });
   } catch (error: any) {
     console.error("Error updating waiter:", error);
+    const userEmail = session?.user?.email || "Unknown User";
+
     if (error.code === "P2002") {
+      void systemLog(
+        "WARN",
+        `Staff update failed (Duplicate Email) for ${userEmail}`
+      );
       return NextResponse.json(
         { error: "Email already taken" },
         { status: 400 }
       );
     }
+
+    void systemLog(
+      "ERROR",
+      `Staff update failed for ${userEmail}: ${error.message}`
+    );
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -86,39 +100,64 @@ export async function PATCH(
   }
 }
 
-// 2. DELETE: Remove Waiter
 export async function DELETE(
   req: Request,
   props: { params: Promise<{ id: string }> }
 ) {
+  let session: Session | null = null;
+  let waiterId = "";
+
   try {
-    const session = await auth();
+    session = await auth();
     if (!session || session.user.role !== "BUSINESS") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const params = await props.params;
-    const waiterId = params.id;
+    waiterId = params.id;
 
     const existingWaiter = await verifyOwnership(session.user.id, waiterId);
     if (!existingWaiter) {
       return NextResponse.json({ error: "Waiter not found" }, { status: 404 });
     }
 
-    // Attempt delete
-    // Note: If the waiter has 'Purchases' linked to them, this will fail
-    // unless you delete purchases first or have cascade delete.
-    // For financial safety, we usually don't delete history, but here we try the delete.
     await prisma.user.delete({
       where: { id: waiterId },
     });
 
+    void systemLog(
+      "WARN",
+      `Staff member removed: '${existingWaiter.username}' (ID: ${waiterId}) by ${session.user.email}`
+    );
+
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting waiter:", error);
+    const userEmail = session?.user?.email || "Unknown User";
+
+    if (error.code === "P2003") {
+      void systemLog(
+        "WARN",
+        `Failed to delete staff ${
+          waiterId || "unknown"
+        }: User has sales history.`
+      );
+      return NextResponse.json(
+        {
+          error:
+            "Cannot delete waiter because they have sales history. Disable their account instead.",
+        },
+        { status: 400 }
+      );
+    }
+
+    void systemLog(
+      "ERROR",
+      `Staff deletion failed for ${userEmail}: ${error.message}`
+    );
     return NextResponse.json(
-      { error: "Cannot delete waiter. They may have sales history." },
-      { status: 400 }
+      { error: "Internal Server Error" },
+      { status: 500 }
     );
   }
 }

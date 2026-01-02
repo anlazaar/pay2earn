@@ -1,28 +1,31 @@
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-
-const prisma = new PrismaClient();
+import { systemLog } from "@/lib/logger";
+import { Session } from "next-auth";
 
 export async function POST(req: Request) {
+  let session: Session | null = null;
+
   try {
-    const session = await auth();
-    if (!session || session.user.role !== "CLIENT") {
+    session = await auth();
+
+    if (!session || !session.user || session.user.role !== "CLIENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { programId } = await req.json();
 
-    // Start a transaction to ensure points are deducted ONLY if ticket is created
+    // Start a transaction
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Get Client ID
+      // Get Client ID
       const client = await tx.client.findUnique({
-        where: { userId: session.user.id },
+        where: { userId: session!.user!.id },
       });
       if (!client) throw new Error("Client profile not found");
 
-      // 2. Get Program & Progress
+      // Get Program & Progress
       const progress = await tx.clientProgress.findUnique({
         where: {
           clientId_programId: {
@@ -30,17 +33,21 @@ export async function POST(req: Request) {
             programId: programId,
           },
         },
-        include: { program: true },
+        include: {
+          program: {
+            include: { business: { select: { name: true } } },
+          },
+        },
       });
 
       if (!progress) throw new Error("No progress found for this program");
 
-      // 3. Check Balance
+      // Check Balance
       if (progress.pointsAccumulated < progress.program.pointsThreshold) {
         throw new Error("Insufficient points");
       }
 
-      // 4. Deduct Points
+      // Deduct Points
       await tx.clientProgress.update({
         where: { id: progress.id },
         data: {
@@ -53,24 +60,46 @@ export async function POST(req: Request) {
       // 5. Create Ticket
       const uniqueString = crypto.randomBytes(32).toString("hex");
 
-      const ticket = await tx.redemptionTicket.create({
+      await tx.redemptionTicket.create({
         data: {
-          ticketId: uniqueString, // The secret string for QR
+          ticketId: uniqueString,
           clientId: client.id,
           businessId: progress.program.businessId,
           programId: programId,
-          expiresAt: new Date(Date.now() + 60 * 60 * 1000), // Valid for 1 hour
+          expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
         },
       });
 
-      return { ticketId: uniqueString };
+      return {
+        ticketId: uniqueString,
+        clientName: client.name,
+        reward: progress.program.rewardValue,
+        businessName: progress.program.business.name,
+      };
     });
 
-    return NextResponse.json(result);
+    // 🟢 LOG SUCCESS
+    void systemLog(
+      "SUCCESS",
+      `Reward Claimed: ${result.clientName} redeemed '${result.reward}' at ${result.businessName}`
+    );
+
+    return NextResponse.json({ ticketId: result.ticketId });
   } catch (error: any) {
-    console.error(error);
+    console.error("Redemption Error:", error);
+
+    const userEmail = session?.user?.email || "Unknown User";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    // 🔴 LOG ERROR
+    void systemLog(
+      "WARN",
+      `Redemption failed for ${userEmail}: ${errorMessage}`
+    );
+
     return NextResponse.json(
-      { error: error.message || "Error" },
+      { error: errorMessage || "Error processing redemption" },
       { status: 400 }
     );
   }
