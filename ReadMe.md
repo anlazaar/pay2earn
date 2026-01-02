@@ -59,7 +59,7 @@ This project uses the latest standards in the React/Next.js ecosystem.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/loyelpass.git
+git clone https://github.com/anlazaar/pay2earn.git
 cd loyelpass
 ```
 
