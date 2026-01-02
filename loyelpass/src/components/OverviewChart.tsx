@@ -32,7 +32,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       // 2. Glassmorphism Tooltip
-      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl p-3 min-w-[140px] animate-in zoom-in-95 duration-200">
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl p-3 min-w-35 animate-in zoom-in-95 duration-200">
         <p className="text-muted-foreground mb-2 text-[10px] uppercase tracking-widest font-bold">
           {label}
         </p>
@@ -65,7 +65,7 @@ export function OverviewChart({ data, className }: Props) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={cn("w-full h-[300px] min-w-0 select-none", className)}
+      className={cn("w-full h-75 min-w-0 select-none", className)}
     >
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart

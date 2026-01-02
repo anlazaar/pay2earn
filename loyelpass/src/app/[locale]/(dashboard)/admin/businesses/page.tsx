@@ -129,7 +129,7 @@ export default function AdminBusinessesPage() {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-white/5">
             <TableRow className="hover:bg-transparent border-b border-zinc-200 dark:border-white/5">
-              <TableHead className="w-[300px] ps-6 h-12 text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+              <TableHead className="w-75 ps-6 h-12 text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
                 Company
               </TableHead>
               <TableHead className="h-12 text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
@@ -180,7 +180,7 @@ export default function AdminBusinessesPage() {
                 >
                   <TableCell className="ps-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center text-xs font-bold border border-zinc-200 dark:border-white/10 shadow-sm group-hover:scale-105 transition-transform">
+                      <div className="h-10 w-10 rounded-xl bg-linear-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center text-xs font-bold border border-zinc-200 dark:border-white/10 shadow-sm group-hover:scale-105 transition-transform">
                         {biz.name.substring(0, 2).toUpperCase()}
                       </div>
                       <div className="flex flex-col">

@@ -145,7 +145,7 @@ export function ProgramActions({ program }: { program: Program }) {
 
       {/* 2. Edit Dialog */}
       <Dialog open={showEdit} onOpenChange={setShowEdit}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader className="text-start">
             <DialogTitle className="text-xl font-bold">
               {t("edit.title")}

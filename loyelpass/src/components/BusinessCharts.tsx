@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 const CustomTooltip = ({ active, payload, label, unit }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl p-3 min-w-[120px] animate-in zoom-in-95">
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl p-3 min-w-30 animate-in zoom-in-95">
         <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-widest font-bold">
           {label}
         </p>
@@ -75,7 +75,7 @@ export function HourlyActivityChart({ data }: HourlyProps) {
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="h-[250px] w-full min-w-0">
+          <div className="h-62.5 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={data}
@@ -176,7 +176,7 @@ export function TopWaitersChart({ data }: WaiterProps) {
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="h-[250px] w-full min-w-0">
+          <div className="h-62.5 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={data}

@@ -86,7 +86,7 @@ export function ClientProgramCard({ program, progress }: Props) {
       {/* 🟢 Card Container */}
       <div
         className={cn(
-          "group relative w-full overflow-hidden rounded-[2rem] border transition-all duration-500",
+          "group relative w-full overflow-hidden rounded-4xl border transition-all duration-500",
           "bg-card/60 backdrop-blur-xl text-card-foreground shadow-sm",
           canRedeem
             ? "border-primary/50 shadow-2xl shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-1"
@@ -96,7 +96,7 @@ export function ClientProgramCard({ program, progress }: Props) {
         {/* Decorative Gradients */}
         <div
           className={cn(
-            "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 pointer-events-none",
+            "absolute inset-0 bg-linear-to-br opacity-0 transition-opacity duration-500 pointer-events-none",
             canRedeem
               ? "from-primary/10 via-transparent to-transparent opacity-100"
               : ""
@@ -121,7 +121,7 @@ export function ClientProgramCard({ program, progress }: Props) {
             </div>
 
             {canRedeem && (
-              <Badge className="bg-gradient-to-r from-primary to-yellow-500 text-black border-0 px-3 py-1 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-primary/20 animate-pulse">
+              <Badge className="bg-linear-to-r from-primary to-yellow-500 text-black border-0 px-3 py-1 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-primary/20 animate-pulse">
                 Reward Unlocked
               </Badge>
             )}
@@ -129,7 +129,7 @@ export function ClientProgramCard({ program, progress }: Props) {
 
           {/* 2. Main Content: Points */}
           <div>
-            <h3 className="text-lg font-bold tracking-tight mb-5 leading-snug text-foreground/90 min-h-[3rem]">
+            <h3 className="text-lg font-bold tracking-tight mb-5 leading-snug text-foreground/90 min-h-12">
               {program.name}
             </h3>
 
@@ -179,7 +179,7 @@ export function ClientProgramCard({ program, progress }: Props) {
                   className={cn(
                     "h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(0,0,0,0.2)]",
                     canRedeem
-                      ? "bg-gradient-to-r from-primary via-yellow-300 to-primary"
+                      ? "bg-linear-to-r from-primary via-yellow-300 to-primary"
                       : "bg-foreground/20 dark:bg-foreground/40"
                   )}
                   style={{ width: `${percentage}%` }}
@@ -199,7 +199,7 @@ export function ClientProgramCard({ program, progress }: Props) {
           <div className="pt-2">
             {canRedeem ? (
               <Button
-                className="w-full h-14 rounded-xl text-sm font-bold uppercase tracking-widest text-black shadow-[0_0_20px_-5px_var(--primary)] bg-gradient-to-r from-primary to-yellow-600 hover:from-yellow-400 hover:to-primary border border-white/20 transition-all active:scale-[0.98]"
+                className="w-full h-14 rounded-xl text-sm font-bold uppercase tracking-widest text-black shadow-[0_0_20px_-5px_var(--primary)] bg-linear-to-r from-primary to-yellow-600 hover:from-yellow-400 hover:to-primary border border-white/20 transition-all active:scale-[0.98]"
                 onClick={handleClaim}
                 disabled={loading}
               >
@@ -228,7 +228,7 @@ export function ClientProgramCard({ program, progress }: Props) {
         <DialogContent className="sm:max-w-sm p-0 overflow-hidden border-none bg-transparent shadow-none">
           <div className="relative flex flex-col items-center">
             {/* Top Half: Gold Header */}
-            <div className="w-full bg-gradient-to-br from-yellow-300 via-primary to-yellow-600 p-8 text-black relative overflow-hidden rounded-t-[2rem]">
+            <div className="w-full bg-linear-to-br from-yellow-300 via-primary to-yellow-600 p-8 text-black relative overflow-hidden rounded-t-4xl">
               {/* Noise Texture */}
               <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMwMDAiLz4KPC9zdmc+')] mix-blend-overlay"></div>
 
@@ -246,7 +246,7 @@ export function ClientProgramCard({ program, progress }: Props) {
             </div>
 
             {/* Jagged Edge Connector */}
-            <div className="w-full h-4 relative z-10 -mt-[1px]">
+            <div className="w-full h-4 relative z-10 -mt-px">
               <div
                 className="w-full h-full bg-white dark:bg-zinc-900"
                 style={{
@@ -257,7 +257,7 @@ export function ClientProgramCard({ program, progress }: Props) {
             </div>
 
             {/* Bottom Half: QR Code */}
-            <div className="w-full bg-white dark:bg-zinc-900 p-8 pb-10 flex flex-col items-center gap-6 rounded-b-[2rem]">
+            <div className="w-full bg-white dark:bg-zinc-900 p-8 pb-10 flex flex-col items-center gap-6 rounded-b-4xl">
               <div className="p-3 bg-white rounded-xl shadow-lg border border-black/5">
                 {qrUrl && (
                   <img

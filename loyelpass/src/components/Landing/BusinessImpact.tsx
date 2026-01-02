@@ -83,7 +83,7 @@ export function BusinessImpact() {
                   : "var(--violet-500)",
               opacity: 0.08,
             }}
-            className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px] transition-colors duration-1000 hidden lg:block"
+            className="absolute top-1/2 right-0 -translate-y-1/2 w-150 h-150 rounded-full blur-[150px] transition-colors duration-1000 hidden lg:block"
           />
         </div>
 
@@ -105,7 +105,7 @@ export function BusinessImpact() {
                 >
                   {/* MOBILE: Visual Injection (Kept your logic) */}
                   {isMobile && (
-                    <div className="mb-8 aspect-[4/5] w-full max-w-sm mx-auto">
+                    <div className="mb-8 aspect-4/5 w-full max-w-sm mx-auto">
                       {/* We pass forceActive so it shows statically without scroll logic on mobile */}
                       <CardVisual
                         feature={feature}
@@ -147,7 +147,7 @@ export function BusinessImpact() {
             </div>
 
             {/* RIGHT COLUMN: 3D Visual Stack (Desktop Only) */}
-            <div className="hidden lg:flex relative h-[600px] w-full items-center justify-center perspective-[1200px] order-1 lg:order-2">
+            <div className="hidden lg:flex relative h-150 w-full items-center justify-center perspective-distant order-1 lg:order-2">
               {FEATURES.map((feature, index) => (
                 <CardVisual
                   key={feature.key}
@@ -213,7 +213,7 @@ function CardVisual({
         GLASS CARD CONTAINER 
         Fixed: Now supports Light Mode (White Glass) and Dark Mode (Dark Glass)
       */}
-      <div className="w-full max-w-[400px] aspect-[4/5] rounded-[2rem] bg-gradient-to-br from-white/80 via-white/40 to-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent border border-white/40 dark:border-white/20 shadow-xl dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] backdrop-blur-2xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-500">
+      <div className="w-full max-w-100 aspect-4/5 rounded-4xl bg-linear-to-br from-white/80 via-white/40 to-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent border border-white/40 dark:border-white/20 shadow-xl dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] backdrop-blur-2xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-500">
         {/* Noise Texture */}
         <div className="absolute inset-0 opacity-10 dark:opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay pointer-events-none"></div>
 
@@ -261,7 +261,7 @@ function CardVisual({
         </div>
 
         {/* Reflection */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background/20 to-transparent pointer-events-none" />
       </div>
     </motion.div>
   );
@@ -288,7 +288,7 @@ function RetentionUI({ color }: { color: string }) {
         />
 
         {/* Central User Avatar */}
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white to-zinc-100 dark:from-zinc-800 dark:to-zinc-950 border border-zinc-200 dark:border-white/10 shadow-2xl flex items-center justify-center relative z-10">
+        <div className="w-20 h-20 rounded-full bg-linear-to-br from-white to-zinc-100 dark:from-zinc-800 dark:to-zinc-950 border border-zinc-200 dark:border-white/10 shadow-2xl flex items-center justify-center relative z-10">
           <User className="w-8 h-8 text-zinc-700 dark:text-white" />
           {/* Notification Badge */}
           <motion.div
@@ -371,7 +371,7 @@ function AnalyticsUI() {
             transition={{ duration: 1, delay: 0.2 + i * 0.1 }}
             className="relative flex-1 group"
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-primary/60 dark:from-primary/10 dark:to-primary/60 rounded-t-sm group-hover:to-primary/80 transition-all" />
+            <div className="absolute inset-0 bg-linear-to-t from-primary/20 to-primary/60 dark:from-primary/10 dark:to-primary/60 rounded-t-sm group-hover:to-primary/80 transition-all" />
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg">
               ${height}k
             </div>
@@ -417,11 +417,11 @@ function AutomationUI() {
         </motion.div>
 
         {/* Connection Line */}
-        <div className="h-8 w-[2px] bg-zinc-200 dark:bg-white/10 mx-auto relative overflow-hidden">
+        <div className="h-8 w-0.5 bg-zinc-200 dark:bg-white/10 mx-auto relative overflow-hidden">
           <motion.div
             animate={{ y: [-10, 30] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent to-violet-500"
+            className="absolute top-0 left-0 w-full h-1/2 bg-linear-to-b from-transparent to-violet-500"
           />
         </div>
 

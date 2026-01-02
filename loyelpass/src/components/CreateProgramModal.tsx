@@ -91,11 +91,11 @@ export function CreateProgramModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="h-10 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 rounded-full px-5 transition-all hover:scale-105">
-          <Plus className="h-4 w-4 stroke-[3]" />
+          <Plus className="h-4 w-4 stroke-3" />
           {t("trigger")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] border border-zinc-200 dark:border-white/10 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl rounded-2xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-112.5 border border-zinc-200 dark:border-white/10 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl rounded-2xl p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b border-zinc-100 dark:border-white/5 text-start bg-zinc-50/50 dark:bg-white/5">
           <div className="flex items-center gap-3 mb-1">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
@@ -283,4 +283,3 @@ export function CreateProgramModal() {
     </Dialog>
   );
 }
-  

@@ -68,7 +68,7 @@ export function ActiveTicketCard({ ticket }: { ticket: any }) {
       {/* Card Container - Glassmorphism & Gold Theme */}
       <div className="group relative overflow-hidden rounded-2xl border border-white/20 bg-white/60 dark:bg-white/5 backdrop-blur-md p-4 shadow-sm hover:shadow-md transition-all duration-300">
         {/* Subtle Gradient Glow on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         <div className="relative flex items-center justify-between z-10">
           <div className="flex items-center gap-4">
@@ -105,7 +105,7 @@ export function ActiveTicketCard({ ticket }: { ticket: any }) {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="flex flex-col items-center sm:max-w-xs border-white/10 bg-background/95 backdrop-blur-xl shadow-2xl">
           <DialogHeader className="items-center">
-            <DialogTitle className="text-xl font-bold bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
+            <DialogTitle className="text-xl font-bold bg-linear-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
               Redeem Reward
             </DialogTitle>
             <DialogDescription className="text-center text-muted-foreground">
