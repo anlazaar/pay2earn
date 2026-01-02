@@ -1,7 +1,3 @@
-Here is the `README.md` updated with your specific file structure and project details.
-
----
-
 # 💎 Loylpass
 
 > **The Next-Generation Loyalty Operating System for Modern Businesses.**
