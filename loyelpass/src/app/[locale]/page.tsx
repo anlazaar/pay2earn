@@ -9,6 +9,7 @@ import { BusinessImpact } from "@/components/Landing/BusinessImpact";
 import { Testimonials } from "@/components/Landing/Testimonials";
 import { CallToAction } from "@/components/Landing/CallToAction";
 import { FAQ } from "@/components/Landing/FAQ";
+import { Suspense } from "react";
 
 export default async function Home({
   params,
@@ -23,7 +24,9 @@ export default async function Home({
   return (
     // The bg-transparent is crucial so the body noise/mesh texture shows through
     <div className="min-h-screen flex flex-col bg-transparent text-foreground selection:bg-primary/30 selection:text-black overflow-x-clip">
-      <Navbar />
+      <Suspense fallback={null}>
+        <Navbar />
+      </Suspense>
 
       <main className="flex-1">
         <Hero />

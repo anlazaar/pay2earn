@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       error instanceof Error ? error.message : "Unknown error";
     void systemLog(
       "ERROR",
-      `Registration failed for ${email || "unknown"}: ${errorMessage}`
+      `Registration failed for ${"unknown"}: ${errorMessage}`
     );
 
     const msg =
