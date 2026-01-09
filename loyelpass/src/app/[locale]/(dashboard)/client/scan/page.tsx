@@ -96,7 +96,7 @@ export default function ScanPage() {
               container: { height: "100%", width: "100%" },
               video: { objectFit: "cover", height: "100%" },
             }}
-            components={{ audio: false, torch: true }}
+            components={{ torch: true }}
           />
         </div>
 

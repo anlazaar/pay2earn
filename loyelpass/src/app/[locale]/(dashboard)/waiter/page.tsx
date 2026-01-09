@@ -360,7 +360,7 @@ export default function WaiterDashboard() {
                 <Scanner
                   onScan={(res) => res[0] && handleScanTicket(res[0].rawValue)}
                   styles={{ container: { height: "100%", width: "100%" } }}
-                  components={{ audio: false, torch: true }}
+                  components={{ torch: true }}
                 />
               )}
             </div>

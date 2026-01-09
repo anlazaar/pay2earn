@@ -18,17 +18,21 @@ interface Props {
   className?: string;
 }
 
+type CustomTooltip = {
+  active?: boolean;
+  payload?: {
+    value?: number;
+  }[];
+  label?: string;
+};
+
 // 1. A Helper to make axis numbers look pro (e.g., 1500 -> 1.5k)
 const formatNumber = (num: number) => {
   if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
   return num.toString();
 };
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label }: CustomTooltip) => {
   if (active && payload && payload.length) {
     return (
       // 2. Glassmorphism Tooltip

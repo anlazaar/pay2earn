@@ -1,10 +1,10 @@
-import { defineConfig } from "prisma";
+// import { defineConfig } from "prisma";
 
-export default defineConfig({
-  datasource: {
-    url: process.env.DATABASE_URL,
-  },
-  migrations: {
-    seed: "npx ts-node prisma/seed.ts",
-  },
-});
+// export default defineConfig({
+//   datasource: {
+//     url: process.env.DATABASE_URL,
+//   },
+//   migrations: {
+//     seed: "npx ts-node prisma/seed.ts",
+//   },
+// });
