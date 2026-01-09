@@ -68,7 +68,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full max-w-[400px] px-6"
+        className="w-full max-w-100 px-6"
       >
         {/* Header */}
         <div className="mb-8 text-center">
@@ -163,7 +163,7 @@ export default function LoginPage() {
               className="flex items-center gap-4 text-xs font-mono text-foreground/80"
               dir="ltr"
             >
-              <span>user: owner@loyvo.com</span>
+              <span>user: owner@loyelpass.com</span>
               <span className="w-px h-3 bg-border" />
               <span>pass: password123</span>
             </div>
